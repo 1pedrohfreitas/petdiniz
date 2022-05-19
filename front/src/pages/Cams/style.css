@@ -7,3 +7,30 @@
     grid-column-gap: 10px;
     grid-row-gap: 1em;
 }
+
+.addAccessCamsArea{
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(auto-fit, minmax(300px, auto));
+    justify-items: center;
+    grid-column-gap: 10px;
+    grid-row-gap: 1em;
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+.dateTimeArea{
+    width: 100%;
+    max-width: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dateTimeArea div{
+    margin-bottom: 1em;
+}
+
+.linkAreaText{
+    margin-top: 2em;
+    flex-direction: column;
+}

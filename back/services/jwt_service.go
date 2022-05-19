@@ -37,7 +37,7 @@ func (s *jwtService) GenerateToken(id uint) (string, error) {
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 2).Unix(),
 			Issuer:    s.issure,
-			IssuedAt:  time.Now().Unix(),
+			IssuedAt:  time.Now().Add(time.Duration(-4) * time.Hour).Unix(),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
@@ -69,7 +69,7 @@ func (s *jwtService) GenerateTokenCamAccess(camAccessPermission models.CamAccess
 		jwt.StandardClaims{
 			ExpiresAt: expiresAt.Unix(),
 			Issuer:    s.issure,
-			IssuedAt:  camAccessPermission.StartPermissionDate.Unix(),
+			IssuedAt:  camAccessPermission.StartPermissionDate.Add(time.Duration(-4) * time.Hour).Unix(),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)

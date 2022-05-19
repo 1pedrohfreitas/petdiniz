@@ -41,7 +41,7 @@ export function CreateUser(props) {
             setUserType(response.data.usertype)
             setUsername(response.data.username)
             setStatus(response.data.status)
-            if(params.userid != userData.id){
+            if (params.userid != userData.id) {
                 setIsChangeUserType(false)
                 setIsChangeStatus(false)
             }

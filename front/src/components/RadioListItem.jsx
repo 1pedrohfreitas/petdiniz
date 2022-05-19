@@ -6,20 +6,29 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
 export default function RadioListItem(props) {
-    const radioGroupTitle = 'Cameras'
+    const radioGroupTitle = props.title
     const itens = props.itens
 
+    const handleChange = (e) =>{
+        props.handleChangeRadio(e)
+    }
+    
     return (
         <FormControl>
             <FormLabel id="demo-radio-buttons-group-label">{radioGroupTitle}</FormLabel>
             <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="female"
+                defaultValue={itens[0].value}
                 name="radio-buttons-group"
+                onChange={handleChange}
+                style={{
+                    display : "flex",
+                    flexDirection : "row"
+
+                }}
             >
                 {itens.map((item) => {
                     return (
-                        <FormControlLabel value={item.id} control={<Radio />} label={item.label} />
+                        <FormControlLabel key={item.value} value={item.value} control={<Radio />} label={item.label} />
                     );
                 })}
             </RadioGroup>

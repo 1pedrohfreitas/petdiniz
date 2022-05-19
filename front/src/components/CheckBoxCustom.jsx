@@ -4,37 +4,39 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 export default function CheckBoxCustom(props) {
-    const [itensChecked, setItensChecked] = useState([]);
-
     const itens = props.itens
 
-    const handleChange1 = (event) => {
-        
-    };
+    const [itensChecked, setItensChecked] = useState([]);
 
-    const handleCheckBox = (item) => {
-        if (itensChecked.length > 0 && itensChecked.findIndex(i => i.id == item.id) > 0) {
-            const newCheckedList = itensChecked.filter(i => {i.id != item.id})
-            if(newCheckedList == 1){
-            }
-            setItensChecked([])
+    const handleChangeCheboxLix = (id) => {
+        const exist = itensChecked.indexOf(id)
+        if(exist === -1){
+            setItensChecked([...itensChecked,id])
         } else {
-            if(Array.isArray(itensChecked)){
-                setItensChecked(itensChecked.push(item))
-            } else {
-                setItensChecked([item])
-            }
+            setItensChecked(itensChecked.filter((item) => item !== id))
         }
-    };
+    }
+
+    const handleSelectAll = () => {
+        if(itensChecked.length != itens.length){
+            setItensChecked(itens.map((item)=> item.id))
+        } else {
+            setItensChecked([])
+        }
+    }
 
     const children = (
         <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
             {itens.map((item) => (
                 <FormControlLabel
-                key={item.id}
+                    key={item.id}
                     label={item.label}
                     control={
-                    <Checkbox onChange={() => handleCheckBox(item)} />}
+                        <Checkbox
+                            checked={itensChecked.includes(item.id)}
+                            onClick={() => handleChangeCheboxLix(item.id)}
+                        />
+                    }
                 />
             ))}
 
@@ -44,12 +46,12 @@ export default function CheckBoxCustom(props) {
     return (
         <div>
             <FormControlLabel
-                label="Cameras"
+                label={props.mainTitle}
                 control={
                     <Checkbox
-                        checked={true}
-                        indeterminate={true}
-                        onChange={handleChange1}
+                        checked={itensChecked.length == itens.length}
+                        indeterminate={itensChecked.length != 0 && itensChecked.length != itens.length}
+                        onClick={handleSelectAll}
                     />
                 }
             />
