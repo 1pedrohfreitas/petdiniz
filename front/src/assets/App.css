@@ -1,0 +1,81 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.App {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.subHeader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(163, 172, 228);
+    width: 100%;
+    height: 40px;
+}
+
+.btnSave {
+    width: 100%;
+    height: 80px;
+    border-radius: 5px;
+}
+
+.tableListItemArea {
+    width: 100%;
+}
+
+
+
+.logoArea img {
+    height: 500px;
+}
+
+.logoutArea {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+.homeHeaderLogo{
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    align-items: center;
+    width: 100%;
+}
+
+
+.homeHeaderLogo img{
+    height: 50px;
+}
+
+.headerMenuArea{
+    min-width: 50px;
+}
+@media only screen and (min-width: 600px) {
+    body {}
+
+    .btnSave {
+        width: 200px;
+        height: 40px;
+    }
+
+}

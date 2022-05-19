@@ -1,0 +1,19 @@
+version: '3'
+services:
+  petdiniz_rmtp:
+    image: 'pedrohfreitas/petdiniz_rmtp:1.0'
+    restart: unless-stopped
+    ports:
+      - '1935:1935'
+      - '8081:80'
+  petdiniz_back:
+    image: 'pedrohfreitas/petdiniz_back:1.0'
+    restart: unless-stopped
+    ports:
+      - '8082:5000'
+  petdiniz_front:
+    image: 'pedrohfreitas/petdiniz_front:1.0'
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+      - '8083:443'
