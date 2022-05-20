@@ -45,10 +45,11 @@ export function CreateUser(props) {
             setFullname('')
             setAlias('')
             setStatus('')
+            setUserType('')
+            setUsername('')
             setIsChangeUserType(false)
             setIsChangeStatus(false)
             setIsChangeUsername(false)
-            console.log(1)
         }
     }, [params.userid]);
 

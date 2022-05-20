@@ -39,9 +39,6 @@ export default function HomeHeader(props) {
                     </Toolbar>
                 </AppBar>
             </Box>
-            <div className="subHeader">
-                {subTitle}
-            </div>
         </div>
 
     );
