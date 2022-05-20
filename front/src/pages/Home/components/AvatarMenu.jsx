@@ -23,6 +23,7 @@ export default function AvatarMenu(props) {
   };
 
   const handleGoToEditUser = () => {
+    props.changeSubTitle("Editando meus dados")
     navigate(`/home/${localStorage.getItem('petdiniz-token').split('.')[1]}/user/${props.userData.id}`)
   }
 

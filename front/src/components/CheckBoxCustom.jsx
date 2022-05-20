@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -17,6 +17,10 @@ export default function CheckBoxCustom(props) {
         }
     }
 
+    useEffect(() => {
+        props.cheboxArrayValue(itensChecked)
+    }, [itensChecked]);
+    
     const handleSelectAll = () => {
         if(itensChecked.length != itens.length){
             setItensChecked(itens.map((item)=> item.id))

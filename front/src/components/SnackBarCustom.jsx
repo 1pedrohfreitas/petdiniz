@@ -3,36 +3,25 @@ import { Alert, Snackbar } from "@mui/material";
 import { useEffect, useState } from "react";
 
 export function SnackBarCustom(props) {
-    
-    const [open, setOpen] = useState(false);
-    const [msgType, setMsgType] = useState('info');
-    const [style, setStyle] = useState({widht : "100%"});
-    
-    function setOpenSnackBarPropetis(){
-        return new Promise((resolve)=>{
-                setOpen(true)
-                if(props.typeMessage != null){
-                    setMsgType(props.typeMessage);
-                }
-                
-                if(props.style != null){
-                    setStyle(props.style)
-                }
-        })
-    }
 
-    async function handlerOpenSnackBar(){
-        await setOpenSnackBarPropetis();
-    }
-    
+    const [msgType, setMsgType] = useState('info');
+    const [style, setStyle] = useState({ widht: "100%" });
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        if(["error","info","success","warning"].indexOf(props.typeMessage) != -1){
-            handlerOpenSnackBar()
-            setTimeout(() => setOpen(false), 2000)
+        setOpen(props.open)
+        if (["error", "info", "success", "warning"].indexOf(props.typeMessage) != -1) {
+            setMsgType(props.typeMessage)
+        } else {
+            setMsgType("error")
         }
-       
-    }, [props.typeMessage]);
+
+        if (props.duration != null) {
+            setTimeout(() => {
+                setOpen(false)
+            }, props.duration);
+        }
+    }, [props.open]);
 
     return (
         <Snackbar open={open}>

@@ -5,11 +5,24 @@ import { getRequest, postRequest, putRequest } from '../../services/Api';
 import './style.css'
 import { TableListItem } from '../../components/TableListItem';
 import { useOutletContext, useParams } from 'react-router-dom';
+import { SnackBarCustom } from '../../components/SnackBarCustom';
 
 const subUrl = `users/`
 export function CreateUser(props) {
     let params = useParams()
     const [userData, setUserData] = useOutletContext();
+
+    const [snackBarType, setSnackBarType] = useState('');
+    const [snackBarMessage, setSnackBarMessage] = useState('');
+    const [snackBarOpen, setSnackBarOpen] = useState(false);
+    function openSnackBar(sbType, sbMessage) {
+        return new Promise((resolve, reject) => {
+            setSnackBarType(sbType)
+            setSnackBarMessage(sbMessage)
+            setSnackBarOpen(true)
+            resolve("Dados Atualizados")
+        })
+    }
 
     const [id, setId] = useState('');
     const [fullname, setFullname] = useState('');
@@ -22,6 +35,8 @@ export function CreateUser(props) {
     const [isChangeUsername, setIsChangeUsername] = useState(true);
     const [password, setPassword] = useState('');
 
+
+
     useEffect(() => {
         if (params.userid != null) {
             getUserData()
@@ -30,6 +45,10 @@ export function CreateUser(props) {
             setFullname('')
             setAlias('')
             setStatus('')
+            setIsChangeUserType(false)
+            setIsChangeStatus(false)
+            setIsChangeUsername(false)
+            console.log(1)
         }
     }, [params.userid]);
 
@@ -41,10 +60,9 @@ export function CreateUser(props) {
             setUserType(response.data.usertype)
             setUsername(response.data.username)
             setStatus(response.data.status)
-            if (params.userid != userData.id) {
-                setIsChangeUserType(false)
-                setIsChangeStatus(false)
-            }
+            setIsChangeUserType(true)
+            setIsChangeStatus(true)
+            setIsChangeUsername(true)
         }).catch(err => {
             navigate(`/home/${localStorage.getItem('petdiniz-token').split('.')[1]}`)
         })
@@ -99,28 +117,38 @@ export function CreateUser(props) {
     };
 
     const handleSaveuser = () => {
+
+        var data = {
+            fullname,
+            alias,
+            status,
+            username,
+            password,
+            userType
+        }
         if (id == '') {
-            postRequest(subUrl, {
-                fullname,
-                alias,
-                status,
-                username,
-                password,
-                userType
-            }).then((response) => {
+            postRequest(subUrl, data).then((response) => {
                 setId(response.data.id)
+                openSnackBar("success", "Usuario adicionado com sucesso").finally(() => {
+                    setTimeout(() => {
+                        setSnackBarOpen(false)
+                    }, 3000);
+                })
             })
         } else {
-            putRequest(subUrl, {
-                id,
-                fullname,
-                alias,
-                status,
-                username,
-                password,
-                userType
-            }).then((response) => {
+            data.id = parseInt(id)
+            if (password == '') {
+                delete data.password
+            }
+            putRequest(subUrl, data).then((response) => {
+
                 setId(response.data.id)
+            }).then(() => {
+                openSnackBar("success", "Usuario editado com sucesso").finally(() => {
+                    setTimeout(() => {
+                        setSnackBarOpen(false)
+                    }, 3000);
+                })
             })
         }
 
@@ -183,6 +211,11 @@ export function CreateUser(props) {
                     onClick={handleSaveuser}
                 >Salvar</button>
             </div>
+            <SnackBarCustom
+                open={snackBarOpen}
+                typeMessage={snackBarType}
+                mensage={snackBarMessage}
+            />
         </div>
     );
 }

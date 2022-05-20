@@ -15,7 +15,8 @@ export function Login() {
     const [pass, setPass] = useState('');
     const [snackBarType, setSnackBarType] = useState('');
     const [snackBarMessage, setSnackBarMessage] = useState('');
-    
+    const [snackBarOpen, setSnackBarOpen] = useState(false);
+
     useEffect(() => {
         validateToken()
     }, []);
@@ -24,21 +25,19 @@ export function Login() {
         if (localStorage.getItem('petdiniz-token') != null) {
             try {
                 const valid = await postRequest('/login/validatetoken', { token: localStorage.getItem('petdiniz-token') })
-                if(valid != null && valid.status == 200){
+                if (valid != null && valid.status == 200) {
                     navigate(`/home/${localStorage.getItem('petdiniz-token').split('.')[1]}`)
                 }
             } catch (error) {
-                
             }
-            
         }
-
     }
 
     function openSnackBar(sbType, sbMessage) {
         return new Promise((resolve, reject) => {
             setSnackBarType(sbType)
             setSnackBarMessage(sbMessage)
+            setSnackBarOpen(true)
             resolve("Dados Atualizados")
         })
     }
@@ -47,16 +46,21 @@ export function Login() {
         const authResult = (await auth(user, pass))
         if (authResult.substring(0, 5) == "token") {
             const token = authResult
-            
-            await openSnackBar("success", "Login efetuado com sucesso!").then((e) => {
+            openSnackBar("success", "Login efetuado com sucesso!").then(() => {
+            }).finally(() => {
+                setTimeout(() => {
+                    setSnackBarOpen(false)
+                }, 2000);
+                setTimeout(() => navigate(`/home/${token.split('.')[1]}`), 3000)
                 localStorage.removeItem('petdiniz-token');
-                localStorage.setItem('petdiniz-token', token.split(':')[1])    
-                setTimeout(() => navigate(`/home/${token.split('.')[1]}`), 1000)
-            });
+                localStorage.setItem('petdiniz-token', token.split(':')[1])
+            })
         }
         else {
-            await openSnackBar("error", authResult).then(() => {
-                setSnackBarType('')
+            openSnackBar("error", authResult).finally(() => {
+                setTimeout(() => {
+                    setSnackBarOpen(false)
+                }, 3000);
             })
         }
     }
@@ -64,6 +68,7 @@ export function Login() {
     return (
         <div className='loginArea'>
             <SnackBarCustom
+                open={snackBarOpen}
                 typeMessage={snackBarType}
                 mensage={snackBarMessage}
             />

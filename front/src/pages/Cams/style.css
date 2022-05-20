@@ -7,6 +7,14 @@
     grid-column-gap: 10px;
     grid-row-gap: 1em;
 }
+.addAccessCams{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+}
 
 .addAccessCamsArea{
     display: grid;

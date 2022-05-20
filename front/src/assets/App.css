@@ -3,6 +3,7 @@
     margin: 0;
     box-sizing: border-box;
 }
+
 .App {
     height: 100%;
     width: 100%;
@@ -31,6 +32,7 @@
 
 .btnSave {
     width: 100%;
+    min-width: 300px;
     height: 80px;
     border-radius: 5px;
 }
@@ -38,8 +40,6 @@
 .tableListItemArea {
     width: 100%;
 }
-
-
 
 .logoArea img {
     height: 500px;
@@ -54,7 +54,7 @@
 
 
 
-.homeHeaderLogo{
+.homeHeaderLogo {
     display: flex;
     justify-content: center;
     align-self: center;
@@ -63,15 +63,29 @@
 }
 
 
-.homeHeaderLogo img{
+.homeHeaderLogo img {
     height: 50px;
 }
 
-.headerMenuArea{
+.headerMenuArea {
     min-width: 50px;
 }
+
+.modalContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalContainer span {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 3em;
+}
+
 @media only screen and (min-width: 600px) {
-    body {}
 
     .btnSave {
         width: 200px;
