@@ -23,7 +23,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 	router.StaticFS("api/v1/static", http.Dir("static"))
 	main := router.Group("api/v1")
 	{
-
+		main.GET("/onlyaccesscam/:token", controllers.ShowCamsByToken)
 		login := main.Group("login")
 		{
 			login.POST("/", controllers.Login)

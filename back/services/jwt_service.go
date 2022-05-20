@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/1pedrohfreitas/pcams_back_go/database"
@@ -83,7 +84,7 @@ func (s *jwtService) GenerateTokenCamAccess(camAccessPermission models.CamAccess
 		db := database.GetDataBase()
 		err = db.QueryRow(
 			`INSERT INTO cam_access_permission (token, alias, camid, startpermissiondate, stoppermissiondate, durationpermitions, userid) VALUES($1, $2, $3, $4, $5, $6, $7)
-			RETURNING id`, t,
+			RETURNING id`, strings.Split(t, ".")[1],
 			camAccessPermission.Alias,
 			c,
 			camAccessPermission.StartPermissionDate,

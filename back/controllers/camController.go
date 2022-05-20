@@ -177,6 +177,40 @@ func ShowCamsByUser(c *gin.Context) {
 
 }
 
+func ShowCamsByToken(c *gin.Context) {
+	tokenPermission := c.Param("token")
+
+	db := database.GetDataBase()
+
+	var result dto.PageResultDTO
+
+	rows, err := db.Query(`select distinct on (c.id) c.id, c.alias, c.urlcamstream, ti.alias, ti.sourceimg, cap.startpermissiondate, cap.stoppermissiondate
+	from cam_access_permission cap
+	inner join cams c on c.id = cap.camid
+	inner join t_imgs ti on ti.id = c.imageid
+	where c.status = 1 and cap.stoppermissiondate > now() and userid = 0 and cap."token" = $1`, tokenPermission)
+	database.CheckError(err)
+
+	defer rows.Close()
+	for rows.Next() {
+		var cam models.CamsByUser
+
+		err = rows.Scan(
+			&cam.ID,
+			&cam.Alias,
+			&cam.UrlCamStream,
+			&cam.Icon.Alias,
+			&cam.Icon.SourceImg,
+			&cam.StartPermissionDate,
+			&cam.StopPermissionDate,
+		)
+		database.CheckError(err)
+		result.Data = append(result.Data, cam)
+	}
+	c.JSON(200, result)
+
+}
+
 func CreateCamAccessPermission(c *gin.Context) {
 
 	var camAccessPermission models.CamAccessPermission
