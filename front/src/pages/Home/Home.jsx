@@ -19,39 +19,52 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import Logout from '@mui/icons-material/Logout';
+import Tooltip from '@mui/material/Tooltip';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ValidatByTime from '../../services/ValidatByTime';
+import { logout } from '../../services/Login';
 
 function Home() {
     let navigate = useNavigate();
-    const [userData, setUserData] = useState({});
-    const [isDone, setIsDone] = useState(false);
+    const [userData, setUserData] = useState(null);
     const [homePage, setHomePage] = useState(<LoadingScreen />)
 
     useEffect(() => {
         getUserData()
     }, []);
 
+    useEffect(() => {
+        if(userData != null ){
+            // ValidatByTime(20000, null,()=>{
+            //     logout().then(()=>{
+            //         navigate(`/`, { replace: true })
+            //     })
+            // })
+            setHomePage(renderByDone())
+        }        
+    }, [userData]);
+
 
     useEffect(() => {
-        if (isDone) {
-            setHomePage(renderByDone())
-        }
-    }, [isDone])
-    useEffect(() => {
-        if (isDone) {
+        if (userData != null) {
             navigate(`/home/${localStorage.getItem('petdiniz-token').split('.')[1]}/mycams`, { replace: true })
         }
     }, [homePage]);
 
-    function getUserData() {
-        const decodedJwt = jwt(localStorage.getItem('petdiniz-token'))
-        getRequest(`users/${decodedJwt.Sum}`).then((data) => {
-            setUserData(data.data)
-        }).then(() => {
-            setIsDone(true)
-        })
+    async function getUserData() {
+        setTimeout(async () => {
+            if (localStorage.getItem('petdiniz-token') != null) {
+                const decodedJwt = await jwt(localStorage.getItem('petdiniz-token'))
+                getRequest(`users/${decodedJwt.Sum}`).then((response) => {
+                    setUserData(response.data)
+                })
+                .catch(err => {
+                    location.reload();
+                })
+            }
+        }, 2000)
+
     }
     function renderByDone() {
         return (
@@ -120,8 +133,9 @@ export function AvatarMenu(props) {
     }
 
     const handleLogout = () => {
-        localStorage.removeItem('petdiniz-token');
-        navigate('/')
+        logout().then(()=>{
+            navigate(`/`, { replace: true })
+        })
     }
     return (
         <React.Fragment>

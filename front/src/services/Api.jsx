@@ -1,30 +1,42 @@
 import axios from "axios"
 
 const api = axios.create({
-  baseURL: getBaseURL(),
-  headers: {
-    "Authorization": `Bearer ${localStorage.getItem('petdiniz-token')}`
-  }
+  baseURL: getBaseURL()
 });
+
 api.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
-export function getBaseURL(){
-  return `https://api.net-apps.info/api/v1/`
+api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('petdiniz-token')}`
+
+export function getBaseURL() {
+  return `http://api.petdiniz.net-apps.info/api/v1/`
 }
-export function getStaticFilesUrl(){
-  return`${getBaseURL()}static/`
+export function getStaticFilesUrl() {
+  return `${getBaseURL()}static/`
 }
 
-export function getRequest(url) {
-  return api.get(url)
+export function loginApi(url, data){
+  return api.post(url, data);
 }
 
-export function postRequest(url, data) {
-    return api.post(url, data)
-}
-export function putRequest(url, data) {
-  return api.put(url, data)
+export async function getRequest(url) {
+  if (localStorage.getItem('petdiniz-token') != null) {
+    return await api.get(url)
+  }
 }
 
-export function deleteRequest(url, id) {
-  return api.delete(`${url}${id}`)
+export async function postRequest(url, data) {
+  if (localStorage.getItem('petdiniz-token') != null) {
+    return await api.post(url, data)
+  }
+}
+export async function putRequest(url, data) {
+  if (localStorage.getItem('petdiniz-token') != null) {
+    return await api.put(url, data)
+  }
+}
+
+export async function deleteRequest(url, id) {
+  if (localStorage.getItem('petdiniz-token') != null) {
+    return await api.delete(`${url}${id}`)
+  }
 }

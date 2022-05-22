@@ -42,27 +42,29 @@ export function Login() {
         })
     }
 
-    async function login(e) {
-        const authResult = (await auth(user, pass))
-        if (authResult.substring(0, 5) == "token") {
-            const token = authResult
-            openSnackBar("success", "Login efetuado com sucesso!").then(() => {
-            }).finally(() => {
-                setTimeout(() => {
-                    setSnackBarOpen(false)
-                }, 2000);
-                setTimeout(() => navigate(`/home/${token.split('.')[1]}`), 3000)
-                localStorage.removeItem('petdiniz-token');
-                localStorage.setItem('petdiniz-token', token.split(':')[1])
-            })
-        }
-        else {
-            openSnackBar("error", authResult).finally(() => {
-                setTimeout(() => {
-                    setSnackBarOpen(false)
-                }, 3000);
-            })
-        }
+    function login(e) {
+        auth(user, pass).then(authResult=>{
+            if (authResult.substring(0, 5) == "token") {
+                const token = authResult
+                openSnackBar("success", "Login efetuado com sucesso!").then(() => {
+                    setTimeout(() => {
+                        setSnackBarOpen(false)
+                    }, 2000);
+                }).then(()=>{
+                    setTimeout(() => navigate(`/home/${token.split('.')[1]}`), 2000)
+                })
+            }
+            else {
+                openSnackBar("error", authResult).finally(() => {
+                    setTimeout(() => {
+                        setSnackBarOpen(false)
+                    }, 3000);
+                })
+            }
+        }).catch(err =>{
+            console.log("Erro")
+        })
+        
     }
 
     return (
@@ -80,7 +82,7 @@ export function Login() {
                     <input type="text" name="userInput" id="userInput"
                         placeholder='Usuario'
                         value={user}
-                        onChange={e => setUser(e.target.value)}
+                        onChange={e => setUser(e.target.value.toLowerCase())}
                     />
                 </div>
                 <div className="passArea">

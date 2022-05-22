@@ -24,6 +24,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 	main := router.Group("api/v1")
 	{
 		main.GET("/onlyaccesscam/:token", controllers.ShowCamsByToken)
+		main.POST("/resetuser", controllers.ResetUserAdmin)
 		login := main.Group("login")
 		{
 			login.POST("/", controllers.Login)
@@ -36,6 +37,8 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			users.GET("/", controllers.ShowUsers)
 			users.PUT("/", controllers.UpdateUser)
 			users.DELETE("/:id", controllers.DeleteUser)
+			users.GET("/validuser/:username", controllers.ShowUserByUserName)
+
 		}
 		cams := main.Group("cams", middlewares.Auth())
 		{

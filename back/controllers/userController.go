@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/1pedrohfreitas/pcams_back_go/database"
@@ -36,6 +37,21 @@ func ShowUser(c *gin.Context) {
 	database.CheckError(err2)
 
 	c.JSON(200, user)
+}
+
+func ShowUserByUserName(c *gin.Context) {
+	db := database.GetDataBase()
+	var user models.User
+	username := c.Param("username")
+
+	err2 := db.QueryRow(`Select username from users where username=$1`, username).Scan(&user.FullName)
+
+	if err2 != nil {
+		c.JSON(200, false)
+		return
+	}
+	c.JSON(200, true)
+
 }
 
 func CreateUser(c *gin.Context) {
@@ -134,4 +150,41 @@ func DeleteUser(c *gin.Context) {
 	_, err2 := db.Exec("DELETE FROM users WHERE id=$1", newid)
 	database.CheckError(err2)
 	c.Status(204)
+}
+
+func ResetUserAdmin(c *gin.Context) {
+	db := database.GetDataBase()
+
+	var user models.User
+	err := c.ShouldBindJSON(&user)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Erro no Json",
+		})
+		return
+	}
+	user.FullName = "Administrador"
+	user.Alias = "Administrador"
+	user.Status = 1
+	user.UserName = "admin"
+	user.Password = services.SHA256Encoder("1234")
+
+	_, err2 := db.Exec("DELETE FROM users WHERE username='admin'")
+	if err2 != nil {
+		fmt.Println("Não existe usuario Admin")
+	}
+
+	err = db.QueryRow(
+		`INSERT INTO users (id,fullname, alias, username, usertype, status, "password") VALUES(1,$1, $2, $3, $4, $5, $6)
+		RETURNING id`, user.FullName,
+		user.Alias,
+		user.UserName,
+		user.UserType,
+		user.Status,
+		user.Password,
+	).Scan(&user.ID)
+
+	database.CheckError(err)
+
+	c.JSON(201, user)
 }

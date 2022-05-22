@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import PlayerVideo from './PlayerVideo';
+import ExitToAppSharpIcon from '@mui/icons-material/ExitToAppSharp';
 
 const style = {
     position: 'absolute',
@@ -32,10 +33,8 @@ export default function ModalCam(props) {
             >
 
                 <Box sx={style}>
-                    <div className="modalCamContainer">
-                        <div className="modalCamContainerActions">
-                            <span className="modalCamContainerActionClose" onClick={closeModal}>X</span>
-                        </div>
+                    <div className="modalContainer">
+                        <span onClick={closeModal}><ExitToAppSharpIcon /></span>
                         <div className="modalCamContainerCamViewr">
                         <PlayerVideo
                         urlVideo={props.urlVideo}

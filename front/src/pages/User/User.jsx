@@ -106,7 +106,7 @@ export function CreateUser(props) {
     };
 
     const handleChangeUserName = (event) => {
-        setUsername(event.target.value);
+        setUsername(event.target.value.toLowerCase());
     };
 
     const handleChangeStatus = (event) => {
@@ -117,6 +117,23 @@ export function CreateUser(props) {
         setUserType(event.target.value);
     };
 
+    function validFields (){
+       return new Promisse((resolve, reject) => {
+        if (fullname == '' ||
+            alias == '' ||
+            status == '' ||
+            userType == '' ||
+            username == '' ||
+            password == '') {
+            openSnackBar("error", "Favor preencher todos os campos").finally(() => {
+                setTimeout(() => {
+                    setSnackBarOpen(false)
+                }, 3000);
+            })
+            reject("Erro")
+        }
+        resolve("Tudo ok")
+    })}
     const handleSaveuser = () => {
 
         var data = {
@@ -128,14 +145,27 @@ export function CreateUser(props) {
             userType
         }
         if (id == '') {
-            postRequest(subUrl, data).then((response) => {
-                setId(response.data.id)
-                openSnackBar("success", "Usuario adicionado com sucesso").finally(() => {
-                    setTimeout(() => {
-                        setSnackBarOpen(false)
-                    }, 3000);
+            validFields.then(() => {
+                getRequest(`users/validuser/${data.username}`).then(response => {
+                    if (response.data) {
+                        openSnackBar("error", "Nome de usuario já existe").finally(() => {
+                            setTimeout(() => {
+                                setSnackBarOpen(false)
+                            }, 3000);
+                        })
+                    } else {
+                        postRequest(subUrl, data).then((response) => {
+                            setId(response.data.id)
+                            openSnackBar("success", "Usuario adicionado com sucesso").finally(() => {
+                                setTimeout(() => {
+                                    setSnackBarOpen(false)
+                                }, 3000);
+                            })
+                        })
+                    }
                 })
             })
+
         } else {
             data.id = parseInt(id)
             if (password == '') {
