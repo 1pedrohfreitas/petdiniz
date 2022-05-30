@@ -140,6 +140,9 @@ export function AddAccessCams(props) {
             startpermissiondate: `${startDate}.000000-03:00`,
             camid: listCamPermission
         }
+        if(listCamPermission.length == 0){
+            listErro.push(`Você prescisa selecionar pelo menos uma câmera para liberar o acesso`)
+        }
         if (typeEndPermission == 1) {
             data.stoppermissiondate = `${endDate}.000000-03:00`
         }
