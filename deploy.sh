@@ -1,11 +1,11 @@
 #!/bin/bash
 echo "Parando os serviços"
-docker stop install-petdiniz_front-1
-docker stop install-petdiniz_back-1
+docker stop petdiniz-petdiniz_front-1
+docker stop petdiniz-petdiniz_back-1
 
 echo "Removendo os containers"
-docker rm install-petdiniz_front-1
-docker rm install-petdiniz_back-1
+docker rm petdiniz-petdiniz_front-1
+docker rm petdiniz-petdiniz_back-1
 
 echo "Removendo as imagens"
 docker rmi pedrohfreitas/petdiniz_front:1.0
