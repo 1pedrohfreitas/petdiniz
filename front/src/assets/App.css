@@ -93,3 +93,18 @@
     }
 
 }
+
+.css-cpgvjg-MuiSnackbar-root{
+    width: 100%;
+}
+.css-j30vut-MuiPaper-root-MuiAlert-root,
+.css-1j5ymg4-MuiPaper-root-MuiAlert-root{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80px;
+}
+.css-acap47-MuiAlert-message{
+    font-size: 20px;
+}

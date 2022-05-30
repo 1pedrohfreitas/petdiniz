@@ -133,6 +133,7 @@ export function AddAccessCams(props) {
     }, []);
 
     const handleSaveAccess = () => {
+        let listErro = []
         let data = {
             alias: alias,
             createbyuserid: userData.id,
@@ -143,27 +144,43 @@ export function AddAccessCams(props) {
             data.stoppermissiondate = `${endDate}.000000-03:00`
         }
         if (typeEndPermission == 2) {
-            data.durationpermitions = durationDate
+            data.durationpermitions = parseInt(durationDate)
+            if(data.durationpermitions == 0){
+                listErro.push(`Para este tipo de delimitação de tempo, o valor deve ser diferente de 0`)
+            }
         }
         if (typeUserPermission == 1) {
-            if (userIdPermission != null) {
+            if (userIdPermission != null && userIdPermission != '') {
                 data.userid = userIdPermission
             } else {
-                return alert("Erro")
+                listErro.push(`Para este tipo de licença, selecione um usuario`)
             }
-
+        } else {
+            data.userid = 0
         }
-        postRequest('cams/camaccesspermission', data, localStorage.getItem('petdiniz-token')).then((response) => {
-            const token = response.data
-            setOnlyLink(`${window.location.origin}/onlyviewcams/${token.split('.')[1]}`)
-            openSnackBar("success", "Link gerado com sucesso!").then(() => {
-            }).finally(() => {
-                setTimeout(() => {
-                    setSnackBarOpen(false)
-                }, 3000);
+        if(listErro.length == 0){
+            postRequest('cams/camaccesspermission', data, localStorage.getItem('petdiniz-token')).then((response) => {
+                const token = response.data
+                setOnlyLink(`${window.location.origin}/onlyviewcams/${token.split('.')[1]}`)
+                openSnackBar("success", "Link gerado com sucesso!").then(() => {
+                }).finally(() => {
+                    setTimeout(() => {
+                        setSnackBarOpen(false)
+                    }, 3000);
+                })
+    
+            }).catch(err => console.log(err))
+        } else {
+            listErro.forEach(erro =>{
+                openSnackBar("erro", erro).then(() => {
+                }).finally(() => {
+                    setTimeout(() => {
+                        setSnackBarOpen(false)
+                    }, 3000);
+                })
             })
-
-        }).catch(err => console.log(err))
+        }
+        
     }
     function openSnackBar(sbType, sbMessage) {
         return new Promise((resolve, reject) => {
