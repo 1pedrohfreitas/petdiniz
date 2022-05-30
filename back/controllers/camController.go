@@ -142,6 +142,7 @@ func DeleteCam(c *gin.Context) {
 	database.CheckError(err2)
 	c.Status(204)
 }
+
 func ShowCamsByUser(c *gin.Context) {
 	userid := c.Param("userid")
 
@@ -188,7 +189,7 @@ func ShowCamsByToken(c *gin.Context) {
 	from cam_access_permission cap
 	inner join cams c on c.id = cap.camid
 	inner join t_imgs ti on ti.id = c.imageid
-	where c.status = 1 and cap.stoppermissiondate > now() and userid = 0 and cap."token" = $1`, tokenPermission)
+	where c.status = 1 and cap.stoppermissiondate > now() and cap."token" = $1`, tokenPermission)
 	database.CheckError(err)
 
 	defer rows.Close()
@@ -228,4 +229,87 @@ func CreateCamAccessPermission(c *gin.Context) {
 	token, err := services.NewJWTService().GenerateTokenCamAccess(camAccessPermission)
 
 	c.JSON(201, token)
+}
+func ShowListCamsAccessPermission(c *gin.Context) {
+	db := database.GetDataBase()
+
+	var result dto.PageResultDTO
+
+	rows, err := db.Query(`select distinct on (cap."token") cap.alias, cap."token",
+	case 
+		when u.fullname is not null then u.fullname
+		else 'Token Unico'
+	end as name,
+	cap.userid as userid,
+	cap.startpermissiondate,
+	cap.stoppermissiondate,
+	cap.durationpermitions
+   from cam_access_permission cap
+   left join users u on u.id = cap.userid`)
+	database.CheckError(err)
+
+	defer rows.Close()
+	for rows.Next() {
+		var cam models.CamAccessPermission
+
+		err = rows.Scan(
+			&cam.Alias,
+			&cam.Token,
+			&cam.UserName,
+			&cam.UserId,
+			&cam.StartPermissionDate,
+			&cam.StopPermissionDate,
+			&cam.DurationPermitions,
+		)
+		database.CheckError(err)
+		result.Data = append(result.Data, cam)
+	}
+	c.JSON(200, result)
+}
+
+func DeleteCamsAccessPermission(c *gin.Context) {
+	token := c.Param("token")
+
+	db := database.GetDataBase()
+	_, err2 := db.Exec("DELETE FROM cam_access_permission WHERE token=$1", token)
+	database.CheckError(err2)
+	c.Status(204)
+}
+
+func ShowDetailsCamsAccessPermission(c *gin.Context) {
+	db := database.GetDataBase()
+	var cam models.CamAccessPermission
+	token := c.Param("token")
+	fmt.Println(token)
+	err2 := db.QueryRow(`select distinct on (cap."token") cap.alias, cap."token",
+	case 
+		when u.fullname is not null then u.fullname
+		else 'Token Unico'
+	end as name,
+	cap.userid as userid,
+	cap.startpermissiondate,
+	cap.stoppermissiondate,
+	cap.durationpermitions,
+	u2.fullname as createbyusername
+   from cam_access_permission cap
+   left join users u on u.id = cap.userid
+   inner join users u2 on u2.id = cap.createbyuser
+   where cap.token =$1 limit 1`, token).Scan(
+		&cam.Alias,
+		&cam.Token,
+		&cam.UserName,
+		&cam.UserId,
+		&cam.StartPermissionDate,
+		&cam.StopPermissionDate,
+		&cam.DurationPermitions,
+		&cam.CreateByUserName,
+	)
+
+	if err2 != nil {
+		c.JSON(200, nil)
+		return
+	}
+
+	c.JSON(200, cam)
+
 }

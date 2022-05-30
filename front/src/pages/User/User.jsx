@@ -1,16 +1,19 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, Box, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 
 import React, { useEffect, useState } from 'react';
 import { getRequest, postRequest, putRequest } from '../../services/Api';
 import './style.css'
 import { TableListItem } from '../../components/TableListItem';
-import { useOutletContext, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { SnackBarCustom } from '../../components/SnackBarCustom';
+import { useSelector } from 'react-redux';
+import { TableListUser } from '../../components/TableListUser';
 
 const subUrl = `users/`
 export function CreateUser(props) {
     let params = useParams()
-    const [userData, setUserData] = useOutletContext();
+    const reduxData = useSelector(state => state.user)
+    const userData = reduxData.user
 
     const [snackBarType, setSnackBarType] = useState('');
     const [snackBarMessage, setSnackBarMessage] = useState('');
@@ -54,7 +57,7 @@ export function CreateUser(props) {
     }, [params.userid]);
 
     const getUserData = () => {
-        getRequest(`${subUrl}${params.userid}`).then(response => {
+        getRequest(`${subUrl}${params.userid}`, localStorage.getItem('petdiniz-token')).then(response => {
             setId(params.userid)
             setFullname(response.data.fullname)
             setAlias(response.data.alias)
@@ -117,23 +120,24 @@ export function CreateUser(props) {
         setUserType(event.target.value);
     };
 
-    function validFields (){
-       return new Promisse((resolve, reject) => {
-        if (fullname == '' ||
-            alias == '' ||
-            status == '' ||
-            userType == '' ||
-            username == '' ||
-            password == '') {
-            openSnackBar("error", "Favor preencher todos os campos").finally(() => {
-                setTimeout(() => {
-                    setSnackBarOpen(false)
-                }, 3000);
-            })
-            reject("Erro")
-        }
-        resolve("Tudo ok")
-    })}
+    function validFields() {
+        return new Promisse((resolve, reject) => {
+            if (fullname == '' ||
+                alias == '' ||
+                status == '' ||
+                userType == '' ||
+                username == '' ||
+                password == '') {
+                openSnackBar("error", "Favor preencher todos os campos").finally(() => {
+                    setTimeout(() => {
+                        setSnackBarOpen(false)
+                    }, 3000);
+                })
+                reject("Erro")
+            }
+            resolve("Tudo ok")
+        })
+    }
     const handleSaveuser = () => {
 
         var data = {
@@ -146,7 +150,7 @@ export function CreateUser(props) {
         }
         if (id == '') {
             validFields.then(() => {
-                getRequest(`users/validuser/${data.username}`).then(response => {
+                getRequest(`users/validuser/${data.username}`, localStorage.getItem('petdiniz-token')).then(response => {
                     if (response.data) {
                         openSnackBar("error", "Nome de usuario já existe").finally(() => {
                             setTimeout(() => {
@@ -154,7 +158,7 @@ export function CreateUser(props) {
                             }, 3000);
                         })
                     } else {
-                        postRequest(subUrl, data).then((response) => {
+                        postRequest(subUrl, data, localStorage.getItem('petdiniz-token')).then((response) => {
                             setId(response.data.id)
                             openSnackBar("success", "Usuario adicionado com sucesso").finally(() => {
                                 setTimeout(() => {
@@ -171,7 +175,7 @@ export function CreateUser(props) {
             if (password == '') {
                 delete data.password
             }
-            putRequest(subUrl, data).then((response) => {
+            putRequest(subUrl, data, localStorage.getItem('petdiniz-token')).then((response) => {
 
                 setId(response.data.id)
             }).then(() => {
@@ -252,22 +256,53 @@ export function CreateUser(props) {
 }
 
 export function ShowUsers(props) {
-    const [userData, setUserData] = useOutletContext();
+    const reduxData = useSelector(state => state.user)
+    const userData = reduxData.user
 
+    const [filterUserId, setFilterUserId] = useState(null);
+    const [usersList, setUsersList] = useState([]);
+
+    const handleUserList = (rows) => {
+        const newArray = rows.map(row =>{
+            return {
+                id : row.id,
+                label: row.fullname
+            }
+        })
+        setUsersList(newArray)
+    }
     const columns = [
         { id: 'id', label: 'ID:', minWidth: 50 },
         { id: 'alias', label: 'Nome Amigavel:', width: 150 },
         { id: 'fullname', label: 'Nome:', minWidth: 200 },
         { id: 'status', label: 'Status:', minWidth: 200 },
-        { id: 'usertype', label: 'Tipo de Usuario:', minWidth: 200 },
+        { id: 'usertypeLabel', label: 'Tipo de Usuario:', minWidth: 200 },
     ];
 
     return (
         <div className="tableListItemArea">
-            <TableListItem
+            <div className="filter">
+                <Autocomplete
+                    disablePortal
+                    id="filterUser"
+                    options={usersList}
+                    onChange={(event, value) => {
+                        if(value != null){
+                            setFilterUserId(value.id)
+                        } else {
+                            setFilterUserId(null)
+                        }
+                    }}
+                    sx={{ width: "100%" }}
+                    renderInput={(params) => <TextField {...params} label="Buscar usuario" />}
+                />
+            </div>
+            <TableListUser
                 userData={userData}
+                idFilter={filterUserId}
                 subUrl={subUrl}
                 columns={columns}
+                handleUserList={handleUserList}
             />
         </div>)
 }

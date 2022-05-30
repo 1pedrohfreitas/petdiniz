@@ -16,7 +16,7 @@ export function OnlyViewCams(props) {
     const [openModalCam, setOpenModalCam] = useState(false);
     
     async function getInfo() {
-        getRequest(`onlyaccesscam/${token}`).then(
+        getRequest(`onlyaccesscam/${token}`,token).then(
             (response) => {
                 if (response.data.data != null) {
                     setCams(response.data.data.map((cam, i) => (

@@ -1,24 +1,24 @@
-import { Autocomplete, Box, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, TextField } from '@mui/material';
 
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { getRequest, postRequest, putRequest } from '../../services/Api';
+import React, { useEffect, useState } from 'react';
+import { getRequest, postRequest } from '../../services/Api';
 import './style.css'
 import { TableListItem } from '../../components/TableListItem';
 import CheckBoxCustom from '../../components/CheckBoxCustom';
 import CamViewCard from '../../components/CamViewCard';
 import RadioListItem from '../../components/RadioListItem';
 import ModalCam from '../../components/ModalCam';
-import jwt from 'jwt-decode'
 import { SnackBarCustom } from '../../components/SnackBarCustom';
-import CreateQrCode from '../../components/CreateQrCode';
 import ModalQrCode from '../../components/ModalQrCode';
+import { useSelector } from 'react-redux';
+import { TableListCamAccessPermission } from '../../components/TableListCamAccessPermission';
+import { useParams } from 'react-router-dom';
+import { TableListItemSimple } from '../../components/TableListItemSimple';
+import { formataDurationMin, formatDateDDMMYYYYHHMMss } from '../../services/DateUtil';
 
 export function MyCams(props) {
-
-    async function getIdUser() {
-        const decodedJwt = await jwt(localStorage.getItem('petdiniz-token'))
-        return decodedJwt.Sum
-    }
+    const reduxData = useSelector(state => state.user)
+    const userData = reduxData.user
 
     const [cams, setCams] = useState([]);
     const [camId, setCamId] = useState(0);
@@ -36,23 +36,21 @@ export function MyCams(props) {
         setOpenModalCam(false)
     }
     useEffect(() => {
-        getIdUser().then((userId) => {
-            getRequest(`cams/mycams/${userId}`).then(
-                (response) => {
-                    if (response.data.data != null) {
-                        setCams(response.data.data.map((cam, i) => (
-                            <CamViewCard
-                                key={i}
-                                camAlias={cam.alias}
-                                camIcon={cam.icon.sourceimg}
-                                camUrlVideo={cam.urlcamstream}
-                                handleOpenModal={handleOpenModal}
-                            />
-                        )))
-                    }
+        getRequest(`cams/mycams/${userData.id}`, localStorage.getItem('petdiniz-token')).then(
+            (response) => {
+                if (response.data.data != null) {
+                    setCams(response.data.data.map((cam, i) => (
+                        <CamViewCard
+                            key={i}
+                            camAlias={cam.alias}
+                            camIcon={cam.icon.sourceimg}
+                            camUrlVideo={cam.urlcamstream}
+                            handleOpenModal={handleOpenModal}
+                        />
+                    )))
                 }
-            )
-        })
+            }
+        )
 
     }, []);
 
@@ -88,12 +86,15 @@ export function ShowCams(props) {
 }
 
 export function AddAccessCams(props) {
+    const reduxData = useSelector(state => state.user)
+    const userData = reduxData.user
     const now = new Date();
     const [startDate, setStartDate] = useState(new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().substring(0, 19));
     const [endDate, setEndDate] = useState(new Date(now.getTime() + 24 * 3600000 - now.getTimezoneOffset() * 60000).toISOString().substring(0, 19));
     const [listCamPermission, setListCamPermission] = useState([]);
     const [durationDate, setDurationDate] = useState(20);
     const [onlyLink, setOnlyLink] = useState('');
+    const [alias, setAlias] = useState('');
     const [typeEndPermission, setTypeEndPermission] = useState(1);
 
     const [snackBarType, setSnackBarType] = useState('');
@@ -109,7 +110,7 @@ export function AddAccessCams(props) {
 
 
     const getAllDates = () => {
-        getRequest(`users/`).then((response) => {
+        getRequest(`users/`, localStorage.getItem('petdiniz-token')).then((response) => {
             if (response.data.data != null) {
                 setUsers(response.data.data.map(user => ({
                     name: user.fullname,
@@ -118,7 +119,7 @@ export function AddAccessCams(props) {
                 })))
             }
         })
-        getRequest(`cams/`).then((response) => {
+        getRequest(`cams/`, localStorage.getItem('petdiniz-token')).then((response) => {
             if (response.data.data != null) {
                 setCams(response.data.data.map(cam => ({
                     id: cam.id,
@@ -133,6 +134,8 @@ export function AddAccessCams(props) {
 
     const handleSaveAccess = () => {
         let data = {
+            alias: alias,
+            createbyuserid : userData.id,
             startpermissiondate: `${startDate}.000000-03:00`,
             camid: listCamPermission
         }
@@ -150,7 +153,7 @@ export function AddAccessCams(props) {
             }
 
         }
-        postRequest('cams/camaccesspermission', data).then((response) => {
+        postRequest('cams/camaccesspermission', data, localStorage.getItem('petdiniz-token')).then((response) => {
             const token = response.data
             setOnlyLink(`${window.location.origin}/onlyviewcams/${token.split('.')[1]}`)
             openSnackBar("success", "Link gerado com sucesso!").then(() => {
@@ -259,6 +262,7 @@ export function AddAccessCams(props) {
 
                 </div>
                 <div className="selectTypeArea">
+                    <TextField id="alias" autoComplete="off" style={{ maxWidth: 600 }} value={alias} onChange={e => setAlias(e.target.value)} label="Nome Referência:" variant="outlined" />
                     <RadioListItem
                         handleChangeRadio={handleChangeTypeUserPermission}
                         title="Tipo de Licença"
@@ -327,4 +331,148 @@ export function AddAccessCams(props) {
             />
         </div>
     )
+}
+
+export function ListAccessCams(props) {
+    const reduxData = useSelector(state => state.user)
+    const userData = reduxData.user
+
+    const [filterUserId, setFilterUserId] = useState(null);
+    const [filterRef, setFilterRef] = useState(null);
+    const [usersList, setUsersList] = useState([]);
+    const [refList, setRefList] = useState([]);
+
+    const handleRefList = (rows) => {
+        const newArray = rows.map(row => {
+            return {
+                id: row.alias,
+                label: row.alias
+            }
+        })
+        setRefList(newArray)
+    }
+
+    useEffect(() => {
+        getRequest('users/', localStorage.getItem('petdiniz-token')).then((response) => {
+            const users = response.data.data.map(row => {
+                return {
+                    id: row.id,
+                    label: row.fullname
+                }
+            })
+            users.unshift({
+                id: 0,
+                label: "Token Unico"
+            })
+            setUsersList(users)
+        })
+    }, []);
+
+    const columns = [
+        { id: 'alias', label: 'Referência:', minWidth: 50 },
+        { id: 'username', label: 'Usuario:', width: 150 },
+        { id: 'startpermissiondate', label: 'Inicio da permissão:', minWidth: 200 },
+        { id: 'stoppermissiondate', label: 'Fim da permissão:', minWidth: 200 },
+        { id: 'durationpermitions', label: 'Duração da permissão:', minWidth: 200 },
+
+    ];
+
+    return (
+        <div className="tableListItemArea">
+            <div className="filter">
+                <Autocomplete
+                    disablePortal
+                    id="filterReferencia"
+                    options={refList}
+                    onChange={(event, value) => {
+                        if (value != null) {
+                            setFilterRef(value.id)
+                        } else {
+                            setFilterRef(null)
+                        }
+                    }}
+                    sx={{ width: "100%" }}
+                    renderInput={(params) => <TextField {...params} label="Buscar por referência" />}
+                />
+                <Autocomplete
+                    disablePortal
+                    id="filterUser"
+                    options={usersList}
+                    onChange={(event, value) => {
+                        if (value != null) {
+                            setFilterUserId(value.id)
+                        } else {
+                            setFilterUserId(null)
+                        }
+                    }}
+                    sx={{ width: "100%" }}
+                    renderInput={(params) => <TextField {...params} label="Buscar usuario" />}
+                />
+            </div>
+            <TableListCamAccessPermission
+                userData={userData}
+                idFilter={filterUserId}
+                refFilter={filterRef}
+                columns={columns}
+                handleRefList={handleRefList}
+            />
+        </div>)
+}
+
+export function DetailsAccessCams(props) {
+    let { token } = useParams()
+
+    const [camsList, setCamsList] = useState([]);
+    const [alias, setAlias] = useState('');
+    const [durationPermitions, setDurationPermitions] = useState('');
+    const [startPermissionDate, setStartPermissionDate] = useState('');
+    const [stopPermissionDate, setStopPermissionDate] = useState('');
+    const [userId, setUserId] = useState('');
+    const [userName, setUserName] = useState('');
+    const [operator, setOperator] = useState('');
+
+    useEffect(() => {
+        getRequest(`cams/camaccesspermission/${token}`, localStorage.getItem('petdiniz-token')).then(response => {
+            const {data} = response
+            if(data != null){
+                setAlias(data.alias)
+                setDurationPermitions(formataDurationMin(data.durationpermitions))
+                setStartPermissionDate(formatDateDDMMYYYYHHMMss(data.startpermissiondate))
+                setStopPermissionDate(formatDateDDMMYYYYHHMMss(data.stoppermissiondate))
+                setUserId(data.userid)
+                setUserName(data.username)
+                setOperator(data.createbyusername)
+            }
+        })
+    
+        getRequest(`onlyaccesscam/${token}`, localStorage.getItem('petdiniz-token')).then(response => {
+            console.log(response)
+            if ( response.data.data != null) {
+                setCamsList(response.data.data)
+            }
+        })    
+    }, []);
+
+    
+
+    const columns = [
+        { id: 'alias', label: 'Cameras:', width: 100 }
+    ];
+
+    return (
+        <div className="tableListItemArea">
+            <TextField id="alias" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={alias} label="Nome Referência:" variant="outlined" />
+            <TextField id="client" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={userName} label="Usuario:" variant="outlined" />
+            <TextField id="operator" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={operator} label="Autorizado por:" variant="outlined" />
+            <TextField id="startPermissionDate" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={startPermissionDate} label="Inicio Permissão:" variant="outlined" />
+            <TextField id="stopPermissionDate" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={stopPermissionDate} label="Fim Permissão:" variant="outlined" />
+            <TextField id="durationaccesspermission" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={durationPermitions} label="Duração da Permissão:" variant="outlined" />
+            <div className="tableListCams">
+            <TableListItemSimple
+                columns={columns}
+                data={camsList}
+            />
+            </div>
+            
+        </div>)
 }

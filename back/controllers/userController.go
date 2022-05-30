@@ -85,7 +85,7 @@ func ShowUsers(c *gin.Context) {
 
 	var result dto.PageResultDTO
 
-	rows, err := db.Query(`SELECT id, fullname, alias, username, usertype, status, created_at, updated_at FROM users`)
+	rows, err := db.Query(`SELECT id, fullname, alias, username, usertype, status, created_at, updated_at FROM users ORDER BY fullname`)
 	database.CheckError(err)
 
 	defer rows.Close()

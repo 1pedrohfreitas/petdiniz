@@ -4,9 +4,9 @@ import {
     Routes
 } from "react-router-dom";
 import Home from "./pages/Home/Home";
-import { Login } from "./pages/Login/Login";
+import { Login, LoginLoading, LogoutLoading } from "./pages/Login/Login";
 import { CreateUser, ShowUsers } from "./pages/User/User";
-import { AddAccessCams, MyCams, ShowCams } from "./pages/Cams/Cams";
+import { ListAccessCams, DetailsAccessCams, AddAccessCams, MyCams, ShowCams } from "./pages/Cams/Cams";
 import { OnlyViewCams } from "./pages/OnlyViewCams/OnlyViewCams";
 
 export function AppRoutes() {
@@ -14,6 +14,8 @@ export function AppRoutes() {
         <Router>
             <Routes>
                 <Route path="/" element={<Login />} />
+                <Route path="/validalogin/:token" element={<LoginLoading />} />
+                <Route path="/logout/" element={<LogoutLoading />} />
                 <Route path="/onlyviewcams/:token" element={<OnlyViewCams />} />
                 <Route path="/home/:token" element={<Home />}>
                     <Route path="user" element={<CreateUser />} />
@@ -23,7 +25,8 @@ export function AppRoutes() {
                     <Route path="cams" element={<ShowCams />} />
                     <Route path="mycams" element={<MyCams />} />
                     <Route path="addaccesscams" element={<AddAccessCams />} />
-                    
+                    <Route path="listaccesscams" element={<ListAccessCams />} />
+                    <Route path="detailsaccesscams/:token" element={<DetailsAccessCams />} />
                 </Route>
 
             </Routes>
@@ -31,3 +34,4 @@ export function AppRoutes() {
         </Router>
     )
 }
+

@@ -10,5 +10,8 @@ type CamAccessPermission struct {
 	StartPermissionDate time.Time `json:"startpermissiondate"`
 	StopPermissionDate  time.Time `json:"stoppermissiondate"`
 	DurationPermitions  uint64    `json:"durationpermitions"`
+	UserName            string    `json:"username"`
 	UserId              uint      `json:"userid"`
+	CreateByUserId      uint      `json:"createbyuserid"`
+	CreateByUserName    string    `json:"createbyusername"`
 }

@@ -1,4 +1,5 @@
-import { loginApi, postRequest } from './Api';
+import { useDispatch } from 'react-redux';
+import { loginApi } from './Api';
 
 export async function auth(username, password) {
 
@@ -15,8 +16,10 @@ export async function auth(username, password) {
                 password
             }
             await loginApi(`login/`, data).then((response) => {
-                localStorage.setItem('petdiniz-token', response.data.token)
-                result = `token:${response.data.token}`
+                const tokenListItens = response.data.token.split('.')
+                const token = `${tokenListItens[1]}_${tokenListItens[2]}`
+                localStorage.setItem('petdiniz-token', token)
+                result = `token:${token}`
 
             }).catch(err => {
                 result = "Nome de usuario ou senha invalido"
@@ -24,11 +27,4 @@ export async function auth(username, password) {
         }
     }
     return result
-}
-
-export function logout() {
-    return new Promise((resolve, response) => {
-        localStorage.removeItem('petdiniz-token');
-        resolve("Ja Limpei o token")
-    })
 }

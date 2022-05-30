@@ -1,17 +1,8 @@
-13 -> Tela parando na tela de login - OK
-
 1 -> permitindo cadastrar mais de uma pessoa com o mesmo nome de usuario
 2 -> permitindo alterar senha para vazio
-3 -> menu funções não esta fazendo distinção do tipo de usuario
-4 -> lista de usuario não esta excluindo usuarios
 5 -> lista de usuarios ordenar por nome
 6 -> tela de liberar acesso ordenar lista por nome
-7 -> tela de listar usuario, criar mecanismo de filtro
 8 -> usuario conseguindo fazer login mesmo com status 0
-9 -> lista de usuarios colocar Ativo quando for 0
-10-> estilizar os botões do liberar acesso
-11 -> salvar todos os usernames com lowcase - OK
-12 -> colocar lowercase no formulario de login - OK
 
 Erros -> IOS:
 1-> Demora para carregar imagem das cameras

@@ -1,10 +1,7 @@
 import './style.css'
 
 import React, { useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import jwt from 'jwt-decode'
-import { getRequest } from '../../services/Api';
-import { LoadingScreen } from '../../components/LoadingScreen';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -23,64 +20,56 @@ import Logout from '@mui/icons-material/Logout';
 import Tooltip from '@mui/material/Tooltip';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ValidatByTime from '../../services/ValidatByTime';
-import { logout } from '../../services/Login';
+import { useSelector } from 'react-redux';
 
 function Home() {
     let navigate = useNavigate();
-    const [userData, setUserData] = useState(null);
-    const [homePage, setHomePage] = useState(<LoadingScreen />)
+    const { token } = useParams()
+    const reduxData = useSelector(state => state.user)
+    const userData = reduxData.user
 
     useEffect(() => {
-        getUserData()
-    }, []);
-
-    useEffect(() => {
-        if(userData != null ){
+        if (userData != null) {
             // ValidatByTime(20000, null,()=>{
             //     logout().then(()=>{
             //         navigate(`/`, { replace: true })
             //     })
             // })
-            setHomePage(renderByDone())
-        }        
+        }
     }, [userData]);
 
 
     useEffect(() => {
         if (userData != null) {
-            navigate(`/home/${localStorage.getItem('petdiniz-token').split('.')[1]}/mycams`, { replace: true })
+            navigate(`/home/${token}/mycams`, { replace: true })
+        } else {
+            navigate(`/validalogin/${token}/`, { replace: true })
         }
-    }, [homePage]);
+    }, []);
 
-    async function getUserData() {
-        setTimeout(async () => {
-            if (localStorage.getItem('petdiniz-token') != null) {
-                const decodedJwt = await jwt(localStorage.getItem('petdiniz-token'))
-                getRequest(`users/${decodedJwt.Sum}`).then((response) => {
-                    setUserData(response.data)
-                })
-                .catch(err => {
-                    location.reload();
-                })
-            }
-        }, 2000)
-
-    }
-    function renderByDone() {
+    if (userData != null) {
         return (
             <div id='homeArea'>
-                <HomeHeader userData={userData} />
+                <HomeHeader />
                 <div id="conteudo">
-                    <Outlet context={[userData, setUserData]} />
+                    <Outlet />
                 </div>
             </div>
         )
+    } else {
+        return (
+            <div id='homeArea'>
+                Vou reiniciar
+            </div>
+        )
     }
-    return homePage
+
+
 }
 
 export function HomeHeader(props) {
-
+    const reduxData = useSelector(state => state.user)
+    const userData = reduxData.user
     const [subTitle, setSubTitle] = useState('');
     function changeSubTitle(newTitle) {
         setSubTitle(newTitle)
@@ -97,7 +86,7 @@ export function HomeHeader(props) {
                     <Toolbar>
                         <div className="headerMenuArea">
                             <FuncoesMenu
-                                userData={props.userData}
+                                userData={userData}
                                 changeSubTitle={changeSubTitle} />
                         </div>
                         <div className='homeHeaderLogo'>
@@ -105,7 +94,7 @@ export function HomeHeader(props) {
                         </div>
                         <div className="headerMenuArea">
                             <AvatarMenu
-                                userData={props.userData}
+                                userData={userData}
                                 changeSubTitle={changeSubTitle} />
                         </div>
                     </Toolbar>
@@ -118,6 +107,9 @@ export function HomeHeader(props) {
 
 export function AvatarMenu(props) {
     let navigate = useNavigate();
+    const reduxData = useSelector(state => state.user)
+    const userData = reduxData.user
+
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -129,13 +121,11 @@ export function AvatarMenu(props) {
 
     const handleGoToEditUser = () => {
         props.changeSubTitle("Editando meus dados")
-        navigate(`/home/${localStorage.getItem('petdiniz-token').split('.')[1]}/user/${props.userData.id}`)
+        navigate(`/home/${localStorage.getItem('petdiniz-token')}/user/${userData.id}`)
     }
 
     const handleLogout = () => {
-        logout().then(()=>{
-            navigate(`/`, { replace: true })
-        })
+        navigate(`/logout`, { replace: true })
     }
     return (
         <React.Fragment>
@@ -190,7 +180,7 @@ export function AvatarMenu(props) {
             >
                 <a onClick={handleGoToEditUser}>
                     <MenuItem>
-                        <Avatar /> {props.userData.alias}
+                        <Avatar /> {userData.alias}
                     </MenuItem>
                 </a>
                 <Divider />
@@ -205,6 +195,8 @@ export function AvatarMenu(props) {
     );
 }
 export function FuncoesMenu(props) {
+    const reduxData = useSelector(state => state.user)
+    const userData = reduxData.user
 
     let navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -220,7 +212,7 @@ export function FuncoesMenu(props) {
 
     const openSubPage = (subView, subTitle) => {
         props.changeSubTitle(subTitle)
-        navigate(`/home/${localStorage.getItem('petdiniz-token').split('.')[1]}/${subView}`, { replace: true })
+        navigate(`/home/${localStorage.getItem('petdiniz-token')}/${subView}`, { replace: true })
     }
     const serviceMenuShow = true
 
@@ -246,12 +238,43 @@ export function FuncoesMenu(props) {
                         'aria-labelledby': 'basic-button',
                     }}
                 >
-                    <MenuItem onClick={() => openSubPage('addaccesscams', 'Liberar Acesso Câmeras')}>Liberar Acesso Câmeras</MenuItem>
-                    <MenuItem onClick={() => openSubPage('cams', 'Listar Câmeras')}>Listar Câmeras</MenuItem>
-                    <MenuItem onClick={() => openSubPage(`mycams`, 'Minhas Câmeras')}>Minhas Câmeras</MenuItem>
+                    <MenuItem
+                        style={{ display: [0,1,2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        onClick={() => openSubPage('addaccesscams', 'Liberar Acesso Câmeras')}
+                    >
+                        Liberar Acesso Câmeras
+                    </MenuItem>
+                    <MenuItem
+                        style={{ display: [0,1,2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        onClick={() => openSubPage('listaccesscams', 'Listar Permissão Acesso Câmeras')}
+                    >
+                        Listar Permissão Acesso Câmeras
+                    </MenuItem>
+                    <MenuItem
+                        style={{ display: [0,1].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        onClick={() => openSubPage('cams', 'Listar Câmeras')}
+                    >
+                        Listar Câmeras
+                    </MenuItem>
+                    <MenuItem
+                        style={{ display: [0,1,2,3].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        onClick={() => openSubPage(`mycams`, 'Minhas Câmeras')}
+                    >
+                        Minhas Câmeras
+                    </MenuItem>
                     <Divider />
-                    <MenuItem onClick={() => openSubPage('user', 'Cadastrar Usuário')}>Cadastrar Usuário</MenuItem>
-                    <MenuItem onClick={() => openSubPage('users', 'Listar Usuários')}>Listar Usuários</MenuItem>
+                    <MenuItem
+                        style={{ display: [0,1,2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        onClick={() => openSubPage('user', 'Cadastrar Usuário')}
+                    >
+                        Cadastrar Usuário
+                    </MenuItem>
+                    <MenuItem
+                        style={{ display: [0,1,2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        onClick={() => openSubPage('users', 'Listar Usuários')}
+                    >
+                        Listar Usuários
+                    </MenuItem>
                 </Menu>
             </div>
 

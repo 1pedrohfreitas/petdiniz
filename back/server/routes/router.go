@@ -49,6 +49,9 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			cams.DELETE("/:id", controllers.DeleteCam)
 			cams.GET("/mycams/:userid", controllers.ShowCamsByUser)
 			cams.POST("/camaccesspermission", controllers.CreateCamAccessPermission)
+			cams.DELETE("/camaccesspermission/:token", controllers.DeleteCamsAccessPermission)
+			cams.GET("/camaccesspermission", controllers.ShowListCamsAccessPermission)
+			cams.GET("/camaccesspermission/:token", controllers.ShowDetailsCamsAccessPermission)
 		}
 	}
 	return router

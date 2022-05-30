@@ -6,56 +6,26 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
-import FileOpenTwoToneIcon from '@mui/icons-material/FileOpenTwoTone';
 import TableRow from '@mui/material/TableRow';
-import { deleteRequest, getRequest } from "../services/Api";
-import { useNavigate } from "react-router-dom";
 
-
-export function TableListItem(props) {
-    const navigate = useNavigate()
+export function TableListItemSimple(props) {
 
     const columns = props.columns
-    const subUrl = props.subUrl
-    const userData = props.userData
 
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
     const [rows, setRows] = useState([]);
 
     useEffect(() => {
-        getRequest(subUrl,localStorage.getItem('petdiniz-token')).then((response) => {
-            if (response.data.data != null) {
-                setRows(response.data.data)
-            }
-        })
+        if(props.data != null){
+            setRows(props.data)
+        }
     }, []);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    const handleDeleteItem = (itemData) => {
-        if (subUrl == 'cams') {
-            if (userData.userType == 0) {
-                deleteRequest(subUrl, id,localStorage.getItem('petdiniz-token')).then(() => {
-                    const newList = rows.filter(id => {
-                        return rows.id != id
-                    })
-                    setRows(newList)
-                })
-            } else {
-                alert('Somente o Super Admin pode excluir cameras')
-            }
-        }
-
-
-    };
-
-    const handleGoToEdit = (itemData) => {
-        navigate(`/home/${localStorage.getItem('petdiniz-token')}/${subUrl.substring(0, subUrl.length - 2)}/${itemData.id}`)
-    }
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
@@ -98,10 +68,6 @@ export function TableListItem(props) {
                                                 </TableCell>
                                             );
                                         })}
-                                        <TableCell>
-                                            <a onClick={() => handleDeleteItem(row)}><DeleteTwoToneIcon /></a>
-                                            <a onClick={() => handleGoToEdit(row)}><FileOpenTwoToneIcon /></a>
-                                        </TableCell>
                                     </TableRow>
 
                                 </React.Fragment>

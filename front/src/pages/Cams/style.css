@@ -42,3 +42,22 @@
     margin-top: 2em;
     flex-direction: column;
 }
+.linkAreaTextBtnArea button{
+    width: 50%;
+    height: 40px;
+}
+.filter{
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(auto-fit, minmax(300px, auto));
+    justify-items: center;
+    grid-column-gap: 10px;
+    grid-row-gap: 1em;
+    width: 100%;
+    margin-bottom: 1em;
+    
+}
+.tableListCams {
+    width: 100%;
+    max-width: 400px;
+}

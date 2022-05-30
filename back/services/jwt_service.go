@@ -83,9 +83,18 @@ func (s *jwtService) GenerateTokenCamAccess(camAccessPermission models.CamAccess
 	for _, c := range camAccessPermission.CamId {
 		db := database.GetDataBase()
 		err = db.QueryRow(
-			`INSERT INTO cam_access_permission (token, alias, camid, startpermissiondate, stoppermissiondate, durationpermitions, userid) VALUES($1, $2, $3, $4, $5, $6, $7)
-			RETURNING id`, strings.Split(t, ".")[1],
+			`INSERT INTO cam_access_permission (
+				token,
+				alias,
+				createbyuser,
+				camid,
+				startpermissiondate,
+				stoppermissiondate,
+				durationpermitions,
+				userid) VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+			RETURNING id`, strings.Split(t, ".")[1]+"_"+strings.Split(t, ".")[2],
 			camAccessPermission.Alias,
+			camAccessPermission.CreateByUserId,
 			c,
 			camAccessPermission.StartPermissionDate,
 			expiresAt,

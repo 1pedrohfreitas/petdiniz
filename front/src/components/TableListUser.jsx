@@ -13,7 +13,7 @@ import { deleteRequest, getRequest } from "../services/Api";
 import { useNavigate } from "react-router-dom";
 
 
-export function TableListItem(props) {
+export function TableListUser(props) {
     const navigate = useNavigate()
 
     const columns = props.columns
@@ -23,34 +23,74 @@ export function TableListItem(props) {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
     const [rows, setRows] = useState([]);
+    const [dados, setDados] = useState([]);
 
     useEffect(() => {
         getRequest(subUrl,localStorage.getItem('petdiniz-token')).then((response) => {
             if (response.data.data != null) {
-                setRows(response.data.data)
+                const dadosFormatados = response.data.data.map(row =>{
+                    switch(row.status){
+                        case 1:
+                            row.status = "Ativo"
+                            break
+                        case 0:
+                            row.status = "Inativo"
+                            break
+                        default:
+                            row.status = "I"
+                            break
+                    }
+
+                    switch(row.usertype){
+                        case 3:
+                            row.usertypeLabel = "Cliente"
+                            break
+                        case 2:
+                            row.usertypeLabel = "Operador"
+                            break
+                        case 1:
+                            row.usertypeLabel = "Administrador"
+                            break
+                        case 0:
+                            row.usertypeLabel = "Super Administrador"
+                            break
+                        default:
+                            row.usertypeLabel = "I"
+                            break
+                    }
+                    return row
+                })
+                    setRows(dadosFormatados)
+                    setDados(dadosFormatados)
+                
+                props.handleUserList(dadosFormatados)
             }
         })
     }, []);
+    useEffect(() => {
+        if(props.idFilter != null){
+            const dadosFormatadosFilter = dados.filter(dado =>{
+                return dado.id == props.idFilter
+            })
+            setRows(dadosFormatadosFilter)
+        } else {
+            setRows(dados)
+        }
+    }, [props.idFilter]);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
     const handleDeleteItem = (itemData) => {
-        if (subUrl == 'cams') {
-            if (userData.userType == 0) {
-                deleteRequest(subUrl, id,localStorage.getItem('petdiniz-token')).then(() => {
-                    const newList = rows.filter(id => {
-                        return rows.id != id
+            if (userData.usertype < itemData.usertype) {
+                deleteRequest(subUrl, itemData.id,localStorage.getItem('petdiniz-token')).then(() => {
+                    const newList = rows.filter(row => {
+                        return row.id != itemData.id
                     })
                     setRows(newList)
                 })
-            } else {
-                alert('Somente o Super Admin pode excluir cameras')
             }
-        }
-
-
     };
 
     const handleGoToEdit = (itemData) => {
