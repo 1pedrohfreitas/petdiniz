@@ -30,7 +30,7 @@ export function Login() {
             try {
                 const valid = await postRequest('/login/validatetoken', { token: localStorage.getItem('petdiniz-token') },localStorage.getItem('petdiniz-token'))
                 if (valid != null && valid.status == 200) {
-                    navigate(`/home/${localStorage.getItem('petdiniz-token').split('.')[1]}`)
+                    navigate(`/home/${localStorage.getItem('petdiniz-token')}`)
                 }
             } catch (error) {
                 console.log("Deu erro")
@@ -115,7 +115,19 @@ export function LoginLoading(props) {
     const { token } = useParams()
 
     useEffect(() => {
-        getUserData()
+        if(token == undefined || token == 'undefined'){
+            navigate('/')
+        } else {
+                postRequest('/login/validatetoken', { token: token },localStorage.getItem('petdiniz-token')).then((response)=>{
+                    if (response != null && response.status == 200) {
+                        getUserData()
+                    }                
+                }).catch (error =>{
+                    localStorage.removeItem('petdiniz-token')
+                    navigate('/')
+                }) 
+        }
+        
     }, []);
 
     async function getUserData() {

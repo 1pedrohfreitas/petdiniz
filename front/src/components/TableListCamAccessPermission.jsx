@@ -44,7 +44,6 @@ export function TableListCamAccessPermission(props) {
     }, []);
     useEffect(() => {
         let dadosFormatadosFilter = dados
-        console.log(dados)
         if (props.idFilter != null) {
             console.log(props.idFilter)
             dadosFormatadosFilter = dadosFormatadosFilter.filter(dado => {

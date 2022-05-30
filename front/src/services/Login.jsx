@@ -16,6 +16,7 @@ export async function auth(username, password) {
                 password
             }
             await loginApi(`login/`, data).then((response) => {
+                console.log(response)
                 const tokenListItens = response.data.token.split('.')
                 const token = `${tokenListItens[1]}_${tokenListItens[2]}`
                 localStorage.setItem('petdiniz-token', token)

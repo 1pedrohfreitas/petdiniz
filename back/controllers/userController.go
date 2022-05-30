@@ -120,18 +120,33 @@ func UpdateUser(c *gin.Context) {
 		})
 		return
 	}
-	user.Password = services.SHA256Encoder(user.Password)
-	_, err2 := db.Exec(`UPDATE pcam.users SET fullname=$1, alias=$2, username=$3, usertype=$4, status=$5, "password"=$6 WHERE id=$7`,
-		user.FullName,
-		user.Alias,
-		user.UserName,
-		user.UserType,
-		user.Status,
-		user.Password, user.ID)
+	if user.Password != "" {
+		user.Password = services.SHA256Encoder(user.Password)
+		_, err2 := db.Exec(`UPDATE pcam.users SET fullname=$1, alias=$2, username=$3, usertype=$4, status=$5, "password"=$6 WHERE id=$7`,
+			user.FullName,
+			user.Alias,
+			user.UserName,
+			user.UserType,
+			user.Status,
+			user.Password, user.ID)
 
-	database.CheckError(err2)
+		database.CheckError(err2)
 
-	c.JSON(200, user)
+		c.JSON(200, user)
+	} else {
+		_, err2 := db.Exec(`UPDATE pcam.users SET fullname=$1, alias=$2, username=$3, usertype=$4, status=$5 WHERE id=$6`,
+			user.FullName,
+			user.Alias,
+			user.UserName,
+			user.UserType,
+			user.Status,
+			user.ID)
+
+		database.CheckError(err2)
+
+		c.JSON(200, user)
+	}
+
 }
 
 func DeleteUser(c *gin.Context) {

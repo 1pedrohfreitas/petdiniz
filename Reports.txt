@@ -1,9 +1,3 @@
-1 -> permitindo cadastrar mais de uma pessoa com o mesmo nome de usuario
-2 -> permitindo alterar senha para vazio
-5 -> lista de usuarios ordenar por nome
-6 -> tela de liberar acesso ordenar lista por nome
-8 -> usuario conseguindo fazer login mesmo com status 0
-
 Erros -> IOS:
 1-> Demora para carregar imagem das cameras
 2-> Botão de salvar cadastro não funciona

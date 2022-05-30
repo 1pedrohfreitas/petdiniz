@@ -3,7 +3,6 @@ import { Autocomplete, Box, FormControl, InputLabel, MenuItem, Select, TextField
 import React, { useEffect, useState } from 'react';
 import { getRequest, postRequest, putRequest } from '../../services/Api';
 import './style.css'
-import { TableListItem } from '../../components/TableListItem';
 import { useParams } from 'react-router-dom';
 import { SnackBarCustom } from '../../components/SnackBarCustom';
 import { useSelector } from 'react-redux';
@@ -42,13 +41,16 @@ export function CreateUser(props) {
 
     useEffect(() => {
         if (params.userid != null) {
+            console.log(1000)
             getUserData()
         } else {
+            console.log(2000)
             setId('')
             setFullname('')
             setAlias('')
             setStatus('')
             setUserType('')
+            setPassword('')
             setUsername('')
             setIsChangeUserType(false)
             setIsChangeStatus(false)
@@ -64,11 +66,11 @@ export function CreateUser(props) {
             setUserType(response.data.usertype)
             setUsername(response.data.username)
             setStatus(response.data.status)
-            setIsChangeUserType(true)
-            setIsChangeStatus(true)
+            setIsChangeUserType(userData.usertype > response.data.usertype)
+            setIsChangeStatus(userData.usertype > response.data.usertype)
             setIsChangeUsername(true)
         }).catch(err => {
-            navigate(`/home/${localStorage.getItem('petdiniz-token').split('.')[1]}`)
+            navigate(`/home/${localStorage.getItem('petdiniz-token')}`)
         })
     }
     const handleSelectByLevel = () => {
@@ -78,18 +80,18 @@ export function CreateUser(props) {
                     <MenuItem key={0} value={0}>Administrador de Sistema</MenuItem>,
                     <MenuItem key={1} value={1}>Administrador</MenuItem>,
                     <MenuItem key={2} value={2}>Operador</MenuItem>,
-                    <MenuItem key={3} value={3}>Usuario</MenuItem>
+                    <MenuItem key={3} value={3}>Cliente</MenuItem>
                 ]
 
             case 1:
                 return [
                     <MenuItem key={1} value={1}>Administrador</MenuItem>,
                     <MenuItem key={2} value={2}>Operador</MenuItem>,
-                    <MenuItem key={3} value={3}>Usuario</MenuItem>
+                    <MenuItem key={3} value={3}>Cliente</MenuItem>
                 ]
             case 2:
                 return [
-                    <MenuItem key={3} value={3}>Usuario</MenuItem>
+                    <MenuItem key={3} value={3}>Cliente</MenuItem>
                 ]
             default:
                 break
@@ -121,14 +123,20 @@ export function CreateUser(props) {
     };
 
     function validFields() {
-        return new Promisse((resolve, reject) => {
-            if (fullname == '' ||
-                alias == '' ||
-                status == '' ||
-                userType == '' ||
-                username == '' ||
-                password == '') {
+        return new Promise((resolve, reject) => {
+            if (fullname === '' ||
+                alias === '' ||
+                status === '' ||
+                userType === '' ||
+                username === '' ||
+                password === '') {
                 openSnackBar("error", "Favor preencher todos os campos").finally(() => {
+                    console.log(fullname)
+                    console.log(alias)
+                    console.log(status)
+                    console.log(userType)
+                    console.log(username)
+                    console.log(password)
                     setTimeout(() => {
                         setSnackBarOpen(false)
                     }, 3000);
@@ -149,7 +157,7 @@ export function CreateUser(props) {
             userType
         }
         if (id == '') {
-            validFields.then(() => {
+            validFields().then(() => {
                 getRequest(`users/validuser/${data.username}`, localStorage.getItem('petdiniz-token')).then(response => {
                     if (response.data) {
                         openSnackBar("error", "Nome de usuario já existe").finally(() => {
@@ -172,9 +180,10 @@ export function CreateUser(props) {
 
         } else {
             data.id = parseInt(id)
-            if (password == '') {
+            if (password === '') {
                 delete data.password
             }
+            console.log(data)
             putRequest(subUrl, data, localStorage.getItem('petdiniz-token')).then((response) => {
 
                 setId(response.data.id)
@@ -260,6 +269,8 @@ export function ShowUsers(props) {
     const userData = reduxData.user
 
     const [filterUserId, setFilterUserId] = useState(null);
+    const [filterStatus, setFilterStatus] = useState(null);
+    const [filterUserType, setFilterUserType] = useState(null);
     const [usersList, setUsersList] = useState([]);
 
     const handleUserList = (rows) => {
@@ -272,12 +283,43 @@ export function ShowUsers(props) {
         setUsersList(newArray)
     }
     const columns = [
-        { id: 'id', label: 'ID:', minWidth: 50 },
-        { id: 'alias', label: 'Nome Amigavel:', width: 150 },
+        { id: 'id', label: 'ID:', width: 50 },
         { id: 'fullname', label: 'Nome:', minWidth: 200 },
-        { id: 'status', label: 'Status:', minWidth: 200 },
+        { id: 'alias', label: 'Nome Amigavel:', width: 150 },
+        { id: 'username', label: 'Nome de Usuario:', width: 250 },
+        { id: 'statusDescription', label: 'Status:', width: 200 },
         { id: 'usertypeLabel', label: 'Tipo de Usuario:', minWidth: 200 },
     ];
+
+    const filterOptionsStatus = [
+        {
+            id :0,
+            label: 'Inativo'
+        },
+        {
+            id :1,
+            label: 'Ativo'
+        }
+    ]
+
+    const filterOptionsUserTipe = [
+        {
+            id :0,
+            label: 'Super Administrador'
+        },
+        {
+            id :1,
+            label: 'Administrador'
+        },
+        {
+            id :2,
+            label: 'Operador'
+        },
+        {
+            id :3,
+            label: 'Cliente'
+        }
+    ]
 
     return (
         <div className="tableListItemArea">
@@ -294,13 +336,44 @@ export function ShowUsers(props) {
                         }
                     }}
                     sx={{ width: "100%" }}
-                    renderInput={(params) => <TextField {...params} label="Buscar usuario" />}
+                    renderInput={(params) => <TextField {...params} label="Buscar por nome" />}
+                />
+                <Autocomplete
+                    disablePortal
+                    id="filterUser"
+                    options={filterOptionsStatus}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    onChange={(event, value) => {
+                        if(value != null){
+                            setFilterStatus(value.id)
+                        } else {
+                            setFilterStatus(null)
+                        }
+                    }}
+                    sx={{ width: 200 }}
+                    renderInput={(params) => <TextField {...params} label="Status" />}
+                />
+                <Autocomplete
+                    disablePortal
+                    id="filterUser"
+                    options={filterOptionsUserTipe}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    onChange={(event, value) => {
+                        if(value != null){
+                            setFilterUserType(value.id)
+                        } else {
+                            setFilterUserType(null)
+                        }
+                    }}
+                    sx={{ width: "100%" }}
+                    renderInput={(params) => <TextField {...params} label="Tipo de usuario" />}
                 />
             </div>
             <TableListUser
                 userData={userData}
                 idFilter={filterUserId}
-                subUrl={subUrl}
+                statusFilter={filterStatus}
+                userTypeFilter={filterUserType}
                 columns={columns}
                 handleUserList={handleUserList}
             />

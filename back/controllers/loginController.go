@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"strings"
+
 	"github.com/1pedrohfreitas/pcams_back_go/database"
 	"github.com/1pedrohfreitas/pcams_back_go/models"
 	"github.com/1pedrohfreitas/pcams_back_go/services"
@@ -61,8 +63,8 @@ func ValidateToken(c *gin.Context) {
 		})
 		return
 	}
-
-	isValidToken := services.NewJWTService().ValidateToken(p.Token)
+	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.` + strings.Replace(p.Token, "_", ".", -1)
+	isValidToken := services.NewJWTService().ValidateToken(token)
 	if !isValidToken {
 		c.JSON(401, gin.H{
 			"error": "Token expirado",

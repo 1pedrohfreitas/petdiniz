@@ -15,6 +15,7 @@ import { TableListCamAccessPermission } from '../../components/TableListCamAcces
 import { useParams } from 'react-router-dom';
 import { TableListItemSimple } from '../../components/TableListItemSimple';
 import { formataDurationMin, formatDateDDMMYYYYHHMMss } from '../../services/DateUtil';
+import { TableListItemCams } from '../../components/TableListItemCams';
 
 export function MyCams(props) {
     const reduxData = useSelector(state => state.user)
@@ -73,13 +74,12 @@ export function ShowCams(props) {
         { id: 'id', label: 'ID:', minWidth: 50 },
         { id: 'alias', label: 'Nome Amigavel:', width: 150 },
         { id: 'devicename', label: 'Nome:', minWidth: 200 },
-        { id: 'streamtype', label: 'Status:', minWidth: 200 },
+        { id: 'status', label: 'Status:', minWidth: 200 },
     ];
 
     return (
         <div className="tableListItemArea">
-            <TableListItem
-                subUrl={subUrl}
+            <TableListItemCams
                 columns={columns}
             />
         </div>)
@@ -135,7 +135,7 @@ export function AddAccessCams(props) {
     const handleSaveAccess = () => {
         let data = {
             alias: alias,
-            createbyuserid : userData.id,
+            createbyuserid: userData.id,
             startpermissiondate: `${startDate}.000000-03:00`,
             camid: listCamPermission
         }
@@ -433,8 +433,8 @@ export function DetailsAccessCams(props) {
 
     useEffect(() => {
         getRequest(`cams/camaccesspermission/${token}`, localStorage.getItem('petdiniz-token')).then(response => {
-            const {data} = response
-            if(data != null){
+            const { data } = response
+            if (data != null) {
                 setAlias(data.alias)
                 setDurationPermitions(formataDurationMin(data.durationpermitions))
                 setStartPermissionDate(formatDateDDMMYYYYHHMMss(data.startpermissiondate))
@@ -444,16 +444,16 @@ export function DetailsAccessCams(props) {
                 setOperator(data.createbyusername)
             }
         })
-    
+
         getRequest(`onlyaccesscam/${token}`, localStorage.getItem('petdiniz-token')).then(response => {
             console.log(response)
-            if ( response.data.data != null) {
+            if (response.data.data != null) {
                 setCamsList(response.data.data)
             }
-        })    
+        })
     }, []);
 
-    
+
 
     const columns = [
         { id: 'alias', label: 'Cameras:', width: 100 }
@@ -461,18 +461,21 @@ export function DetailsAccessCams(props) {
 
     return (
         <div className="tableListItemArea">
-            <TextField id="alias" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={alias} label="Nome Referência:" variant="outlined" />
-            <TextField id="client" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={userName} label="Usuario:" variant="outlined" />
-            <TextField id="operator" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={operator} label="Autorizado por:" variant="outlined" />
-            <TextField id="startPermissionDate" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={startPermissionDate} label="Inicio Permissão:" variant="outlined" />
-            <TextField id="stopPermissionDate" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={stopPermissionDate} label="Fim Permissão:" variant="outlined" />
-            <TextField id="durationaccesspermission" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={durationPermitions} label="Duração da Permissão:" variant="outlined" />
-            <div className="tableListCams">
-            <TableListItemSimple
-                columns={columns}
-                data={camsList}
-            />
+            <div className="accessInfo">
+                <TextField id="alias" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={alias} label="Nome Referência:" variant="outlined" />
+                <TextField id="client" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={userName} label="Usuario:" variant="outlined" />
+                <TextField id="operator" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={operator} label="Autorizado por:" variant="outlined" />
+                <TextField id="startPermissionDate" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={startPermissionDate} label="Inicio Permissão:" variant="outlined" />
+                <TextField id="stopPermissionDate" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={stopPermissionDate} label="Fim Permissão:" variant="outlined" />
+                <TextField id="durationaccesspermission" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={durationPermitions} label="Duração da Permissão:" variant="outlined" />
             </div>
-            
+
+            <div className="tableListCams">
+                <TableListItemSimple
+                    columns={columns}
+                    data={camsList}
+                />
+            </div>
+
         </div>)
 }

@@ -6,107 +6,50 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
-import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
-import FileOpenTwoToneIcon from '@mui/icons-material/FileOpenTwoTone';
 import TableRow from '@mui/material/TableRow';
 import { deleteRequest, getRequest } from "../services/Api";
 import { useNavigate } from "react-router-dom";
 
 
-export function TableListUser(props) {
+export function TableListItemCams(props) {
     const navigate = useNavigate()
 
     const columns = props.columns
-    const subUrl = 'users/'
+    const subUrl = '/cams/'
     const userData = props.userData
 
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
     const [rows, setRows] = useState([]);
-    const [dados, setDados] = useState([]);
 
     useEffect(() => {
         getRequest(subUrl,localStorage.getItem('petdiniz-token')).then((response) => {
+
             if (response.data.data != null) {
                 const dadosFormatados = response.data.data.map(row =>{
                     switch(row.status){
                         case 1:
-                            row.statusDescription = "Ativo"
+                            row.status = "Ativo"
                             break
                         case 0:
-                            row.statusDescription = "Inativo"
+                            row.status = "Inativo"
                             break
                         default:
-                            row.statusDescription = "I"
-                            break
-                    }
-
-                    switch(row.usertype){
-                        case 3:
-                            row.usertypeLabel = "Cliente"
-                            break
-                        case 2:
-                            row.usertypeLabel = "Operador"
-                            break
-                        case 1:
-                            row.usertypeLabel = "Administrador"
-                            break
-                        case 0:
-                            row.usertypeLabel = "Super Administrador"
-                            break
-                        default:
-                            row.usertypeLabel = "I"
+                            row.status = "I"
                             break
                     }
                     return row
-                })
-                    setRows(dadosFormatados)
-                    setDados(dadosFormatados)
-                
-                props.handleUserList(dadosFormatados)
+                })                
+                setRows(dadosFormatados)
+
             }
         })
     }, []);
-
-    useEffect(() => {
-        let dadosFormatadosFilter = dados
-        if (props.idFilter != null) {
-            dadosFormatadosFilter = dadosFormatadosFilter.filter(dado => {
-                return dado.userid == props.idFilter
-            })
-        } 
-        if (props.statusFilter != null) {
-            dadosFormatadosFilter = dadosFormatadosFilter.filter(dado => {
-                return dado.status == props.statusFilter
-            })
-        } 
-        if (props.userTypeFilter != null) {
-            dadosFormatadosFilter = dadosFormatadosFilter.filter(dado => {
-                return dado.usertype == props.userTypeFilter
-            })
-        } 
-        setRows(dadosFormatadosFilter)
-
-    }, [props.idFilter,props.userTypeFilter,props.statusFilter]);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    const handleDeleteItem = (itemData) => {
-            if (userData.usertype < itemData.usertype) {
-                deleteRequest(subUrl, itemData.id,localStorage.getItem('petdiniz-token')).then(() => {
-                    const newList = rows.filter(row => {
-                        return row.id != itemData.id
-                    })
-                    setRows(newList)
-                })
-            }
-    };
-
-    const handleGoToEdit = (itemData) => {
-        navigate(`/home/${localStorage.getItem('petdiniz-token')}/${subUrl.substring(0, subUrl.length - 2)}/${itemData.id}`)
-    }
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
@@ -149,10 +92,6 @@ export function TableListUser(props) {
                                                 </TableCell>
                                             );
                                         })}
-                                        <TableCell>
-                                            <a onClick={() => handleDeleteItem(row)}><DeleteTwoToneIcon /></a>
-                                            <a onClick={() => handleGoToEdit(row)}><FileOpenTwoToneIcon /></a>
-                                        </TableCell>
                                     </TableRow>
 
                                 </React.Fragment>
