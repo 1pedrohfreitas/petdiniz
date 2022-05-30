@@ -185,11 +185,13 @@ func ShowCamsByToken(c *gin.Context) {
 
 	var result dto.PageResultDTO
 
+	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9_` + tokenPermission
+
 	rows, err := db.Query(`select distinct on (c.id) c.id, c.alias, c.urlcamstream, ti.alias, ti.sourceimg, cap.startpermissiondate, cap.stoppermissiondate
 	from cam_access_permission cap
 	inner join cams c on c.id = cap.camid
 	inner join t_imgs ti on ti.id = c.imageid
-	where c.status = 1 and cap.stoppermissiondate > now() and cap."token" = $1`, tokenPermission)
+	where c.status = 1 and cap.stoppermissiondate > now() and cap."token" = $1`, token)
 	database.CheckError(err)
 
 	defer rows.Close()
