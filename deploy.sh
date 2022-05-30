@@ -15,7 +15,7 @@ echo "Construindo a imagem do servidor de cameras"
 cd rmtp && docker build -t pedrohfreitas/petdiniz_rmtp:1.0 .
 
 echo "Construindo a imagem do front"
-cd .. front && docker build -t pedrohfreitas/petdiniz_front:1.0 .
+cd .. && cd front && docker build -t pedrohfreitas/petdiniz_front:1.0 .
 
 echo "Construindo a imagem do back"
 cd .. && cd back && docker build -t pedrohfreitas/petdiniz_back:1.0 .
