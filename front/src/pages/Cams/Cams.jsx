@@ -101,6 +101,15 @@ export function AddAccessCams(props) {
     const [snackBarMessage, setSnackBarMessage] = useState('');
     const [snackBarOpen, setSnackBarOpen] = useState(false);
 
+    function openSnackBar(sbType, sbMessage) {
+        return new Promise((resolve, reject) => {
+            setSnackBarType(sbType)
+            setSnackBarMessage(sbMessage)
+            setSnackBarOpen(true)
+            resolve("Dados Atualizados")
+        })
+    }
+
     const [typeUserPermission, setTypeUserPermission] = useState(1);
     const [userIdPermission, setUserIdPermission] = useState('');
 
@@ -140,7 +149,7 @@ export function AddAccessCams(props) {
             startpermissiondate: `${startDate}.000000-03:00`,
             camid: listCamPermission
         }
-        if(listCamPermission.length == 0){
+        if (listCamPermission.length == 0) {
             listErro.push(`Você prescisa selecionar pelo menos uma câmera para liberar o acesso`)
         }
         if (typeEndPermission == 1) {
@@ -148,7 +157,7 @@ export function AddAccessCams(props) {
         }
         if (typeEndPermission == 2) {
             data.durationpermitions = parseInt(durationDate)
-            if(data.durationpermitions == 0){
+            if (data.durationpermitions == 0) {
                 listErro.push(`Para este tipo de delimitação de tempo, o valor deve ser diferente de 0`)
             }
         }
@@ -161,20 +170,20 @@ export function AddAccessCams(props) {
         } else {
             data.userid = 0
         }
-        if(listErro.length == 0){
+        if (listErro.length == 0) {
             postRequest('cams/camaccesspermission', data, localStorage.getItem('petdiniz-token')).then((response) => {
                 const token = response.data
-                setOnlyLink(`${window.location.origin}/onlyviewcams/${token.split('.')[1]}`)
+                setOnlyLink(`${window.location.origin}/onlyviewcams/${token}`)
                 openSnackBar("success", "Link gerado com sucesso!").then(() => {
                 }).finally(() => {
                     setTimeout(() => {
                         setSnackBarOpen(false)
                     }, 3000);
                 })
-    
+
             }).catch(err => console.log(err))
         } else {
-            listErro.forEach(erro =>{
+            listErro.forEach(erro => {
                 openSnackBar("erro", erro).then(() => {
                 }).finally(() => {
                     setTimeout(() => {
@@ -183,16 +192,9 @@ export function AddAccessCams(props) {
                 })
             })
         }
-        
+
     }
-    function openSnackBar(sbType, sbMessage) {
-        return new Promise((resolve, reject) => {
-            setSnackBarType(sbType)
-            setSnackBarMessage(sbMessage)
-            setSnackBarOpen(true)
-            resolve("Dados Atualizados")
-        })
-    }
+
     const handleCopyOnlyLink = (e) => {
         navigator.clipboard.writeText(onlyLink).then(() => {
             openSnackBar("success", "Link copiado com sucesso!").then(() => {
@@ -450,8 +452,29 @@ export function DetailsAccessCams(props) {
     const [userId, setUserId] = useState('');
     const [userName, setUserName] = useState('');
     const [operator, setOperator] = useState('');
+    const [onlyLink, setOnlyLink] = useState('');
+
+    const [openModal, setOpenModal] = useState(false);
+
+    const [snackBarType, setSnackBarType] = useState('');
+    const [snackBarMessage, setSnackBarMessage] = useState('');
+    const [snackBarOpen, setSnackBarOpen] = useState(false);
+
+
+    function openSnackBar(sbType, sbMessage) {
+        return new Promise((resolve, reject) => {
+            setSnackBarType(sbType)
+            setSnackBarMessage(sbMessage)
+            setSnackBarOpen(true)
+            resolve("Dados Atualizados")
+        })
+    }
+    const handleCloseModal = () => {
+        setOpenModal(false)
+    }
 
     useEffect(() => {
+        console.log(token)
         getRequest(`cams/camaccesspermission/${token}`, localStorage.getItem('petdiniz-token')).then(response => {
             const { data } = response
             if (data != null) {
@@ -463,6 +486,10 @@ export function DetailsAccessCams(props) {
                 setUserName(data.username)
                 setOperator(data.createbyusername)
             }
+        }).then(() => {
+            if (userId == 0) {
+                setOnlyLink(`${window.location.origin}/onlyviewcams/${token}`)
+            }
         })
 
         getRequest(`onlyaccesscam/${token}`, localStorage.getItem('petdiniz-token')).then(response => {
@@ -471,8 +498,20 @@ export function DetailsAccessCams(props) {
                 setCamsList(response.data.data)
             }
         })
+
+
     }, []);
 
+    const handleCopyOnlyLink = (e) => {
+        navigator.clipboard.writeText(onlyLink).then(() => {
+            openSnackBar("success", "Link copiado com sucesso!").then(() => {
+            }).finally(() => {
+                setTimeout(() => {
+                    setSnackBarOpen(false)
+                }, 3000);
+            })
+        })
+    }
 
 
     const columns = [
@@ -489,6 +528,24 @@ export function DetailsAccessCams(props) {
                 <TextField id="stopPermissionDate" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={stopPermissionDate} label="Fim Permissão:" variant="outlined" />
                 <TextField id="durationaccesspermission" autoComplete="off" disabled={true} style={{ maxWidth: 600 }} value={durationPermitions} label="Duração da Permissão:" variant="outlined" />
             </div>
+            <div className="onlyLinkArea" style={{
+                display : userId == 0 ? "flex" : "none"
+            }}>
+                <TextField id="onlyLink" autoComplete="off" value={onlyLink} label="Link de Liberação:" variant="outlined" />
+                <div className="linkAreaTextBtnArea">
+                    <button
+                        onClick={handleCopyOnlyLink}
+                    >
+                        Copiar!
+                    </button>
+                    <button
+                        onClick={() => setOpenModal(true)}
+                    >
+                        Gerar QrCode
+                    </button>
+                </div>
+            </div>
+
 
             <div className="tableListCams">
                 <TableListItemSimple
@@ -496,6 +553,16 @@ export function DetailsAccessCams(props) {
                     data={camsList}
                 />
             </div>
+            <SnackBarCustom
+                open={snackBarOpen}
+                typeMessage={snackBarType}
+                mensage={snackBarMessage}
+            />
+            <ModalQrCode
+                openModalQrCode={openModal}
+                qrCodeText={onlyLink}
+                handleCloseModal={handleCloseModal}
+            />
 
         </div>)
 }

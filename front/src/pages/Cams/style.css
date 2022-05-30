@@ -81,3 +81,21 @@
     width: 100%;
     margin-bottom: 1em;
 }
+.onlyLinkArea{
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.onlyLinkArea > div.css-1u3bzj6-MuiFormControl-root-MuiTextField-root{
+    width: 100%;
+    display: block;
+}
+.linkAreaTextBtnArea{
+    display: flex;
+    flex-direction: row;
+}
+.linkAreaTextBtnArea button{
+    width: 150px;
+    margin: 10px;
+}

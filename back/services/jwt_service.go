@@ -77,6 +77,8 @@ func (s *jwtService) GenerateTokenCamAccess(camAccessPermission models.CamAccess
 
 	t, err := token.SignedString([]byte(s.secretKey))
 
+	tokenFormated := strings.Split(t, ".")[1] + "_" + strings.Split(t, ".")[2]
+
 	if err != nil {
 		return "", err
 	}
@@ -92,7 +94,7 @@ func (s *jwtService) GenerateTokenCamAccess(camAccessPermission models.CamAccess
 				stoppermissiondate,
 				durationpermitions,
 				userid) VALUES($1, $2, $3, $4, $5, $6, $7, $8)
-			RETURNING id`, strings.Split(t, ".")[1]+"_"+strings.Split(t, ".")[2],
+			RETURNING id`, tokenFormated,
 			camAccessPermission.Alias,
 			camAccessPermission.CreateByUserId,
 			c,
@@ -104,7 +106,7 @@ func (s *jwtService) GenerateTokenCamAccess(camAccessPermission models.CamAccess
 		database.CheckError(err)
 	}
 
-	return t, nil
+	return tokenFormated, nil
 
 }
 
