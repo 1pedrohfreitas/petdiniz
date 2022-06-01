@@ -1,9 +1,8 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
-import CreateQrCode from './CreateQrCode';
 import ExitToAppSharpIcon from '@mui/icons-material/ExitToAppSharp';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import React from 'react';
+import CreateQrCode from './CreateQrCode';
 
 const style = {
     position: 'absolute',

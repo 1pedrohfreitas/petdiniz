@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import React, { useEffect, useState } from 'react';
 
 export default function CheckBoxCustom(props) {
     const itens = props.itens

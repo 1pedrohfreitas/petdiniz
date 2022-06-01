@@ -1,11 +1,11 @@
-import './CamViewCard.css'
-import * as React from 'react';
+import { CardActionArea } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { CardActionArea } from '@mui/material';
+import React from 'react';
 import { getStaticFilesUrl } from '../services/Api';
+import './CamViewCard.css';
 
 export default function CamViewCard(props) {
 

@@ -1,13 +1,26 @@
+import { lazy } from "react";
 import {
     BrowserRouter as Router,
     Route,
     Routes
 } from "react-router-dom";
-import Home from "./pages/Home/Home";
-import { Login, LoginLoading, LogoutLoading } from "./pages/Login/Login";
-import { CreateUser, ShowUsers } from "./pages/User/User";
-import { ListAccessCams, DetailsAccessCams, AddAccessCams, MyCams, ShowCams } from "./pages/Cams/Cams";
-import { OnlyViewCams } from "./pages/OnlyViewCams/OnlyViewCams";
+const AddAccessCams = lazy(()=>import("./pages/Cams/AddAccessCams"))
+const DetailsAccessCams = lazy(()=>import("./pages/Cams/DetailsAccessCams"))
+const ListAccessCams = lazy(()=>import("./pages/Cams/ListAccessCams"))
+const MyCams = lazy(()=>import("./pages/Cams/MyCams"))
+const ShowCams = lazy(()=>import("./pages/Cams/ShowCams")) 
+
+const Login = lazy(()=>import("./pages/Login/Login"))
+const LoginLoading = lazy(()=>import("./pages/Login/LoginLoading"))
+const LogoutLoading = lazy(()=>import("./pages/Login/LogoutLoading"))
+const Home = lazy(()=>import("./pages/Home/Home"))
+
+const OnlyViewCams = lazy(()=>import("./pages/OnlyViewCams/OnlyViewCams"))
+
+const CreateUser = lazy(()=>import("./pages/User/CreateUser"))
+const ShowUsers = lazy(()=>import("./pages/User/ShowUsers"))
+
+
 
 export function AppRoutes() {
     return (

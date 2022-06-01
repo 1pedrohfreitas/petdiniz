@@ -179,13 +179,11 @@ func ShowCamsByUser(c *gin.Context) {
 }
 
 func ShowCamsByToken(c *gin.Context) {
-	tokenPermission := c.Param("token")
+	token := c.Param("token")
 
 	db := database.GetDataBase()
 
 	var result dto.PageResultDTO
-
-	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9_` + tokenPermission
 
 	rows, err := db.Query(`select distinct on (c.id) c.id, c.alias, c.urlcamstream, ti.alias, ti.sourceimg, cap.startpermissiondate, cap.stoppermissiondate
 	from cam_access_permission cap
@@ -228,7 +226,7 @@ func CreateCamAccessPermission(c *gin.Context) {
 		return
 	}
 
-	token, err := services.NewJWTService().GenerateTokenCamAccess(camAccessPermission)
+	token, _ := services.GenerateTokenCamAccess(camAccessPermission)
 
 	c.JSON(201, token)
 }
@@ -282,7 +280,6 @@ func ShowDetailsCamsAccessPermission(c *gin.Context) {
 	db := database.GetDataBase()
 	var cam models.CamAccessPermission
 	token := c.Param("token")
-	fmt.Println(token)
 	err2 := db.QueryRow(`select distinct on (cap."token") cap.alias, cap."token",
 	case 
 		when u.fullname is not null then u.fullname

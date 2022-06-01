@@ -1,5 +1,5 @@
+import Hls from 'hls.js';
 import React, { useEffect, useRef } from 'react';
-import Hls, { Config } from 'hls.js';
 
 function PlayerVideo(props) {
     const playerRef = useRef();

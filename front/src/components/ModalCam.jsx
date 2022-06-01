@@ -1,10 +1,8 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import PlayerVideo from './PlayerVideo';
 import ExitToAppSharpIcon from '@mui/icons-material/ExitToAppSharp';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import React from 'react';
+import PlayerVideo from './PlayerVideo';
 
 const style = {
     position: 'absolute',

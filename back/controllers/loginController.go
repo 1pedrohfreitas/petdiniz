@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"strings"
-
 	"github.com/1pedrohfreitas/pcams_back_go/database"
 	"github.com/1pedrohfreitas/pcams_back_go/models"
 	"github.com/1pedrohfreitas/pcams_back_go/services"
@@ -22,7 +20,6 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	println(p.Username)
 	dbErro := db.QueryRow(`select id ,username, password from users where status = 1 and username=$1`,
 		p.Username).Scan(&login.ID, &login.Username, &login.Password)
 
@@ -63,9 +60,9 @@ func ValidateToken(c *gin.Context) {
 		})
 		return
 	}
-	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.` + strings.Replace(p.Token, "_", ".", -1)
-	isValidToken := services.NewJWTService().ValidateToken(token)
-	if !isValidToken {
+
+	id := services.NewJWTService().ValidateToken(p.Token)
+	if id == 0 {
 		c.JSON(401, gin.H{
 			"error": "Token expirado",
 		})
@@ -73,5 +70,6 @@ func ValidateToken(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{
 		"error": "Token valido",
+		"id":    id,
 	})
 }

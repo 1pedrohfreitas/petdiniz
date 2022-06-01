@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react"
-import Qrcode from "qrcode"
+import Qrcode from "qrcode";
+import React, { useEffect, useRef } from "react";
 
 export default function CreateQrCode(props) {
     const canvasRef = useRef()

@@ -16,7 +16,7 @@ func Auth() gin.HandlerFunc {
 
 		token := header[len(Bearer_schema):]
 
-		if !services.NewJWTService().ValidateToken(token) {
+		if services.NewJWTService().ValidateToken(token) == 0 {
 			c.AbortWithStatus(401)
 		}
 

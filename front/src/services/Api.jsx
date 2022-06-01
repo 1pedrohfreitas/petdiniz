@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "axios";
 
 const api = axios.create({
   baseURL: getBaseURL()
@@ -6,6 +6,7 @@ const api = axios.create({
 
 export function getBaseURL() {
   return `https://api.net-apps.info/api/v1/`
+  // return `http://localhost:5000/api/v1/`
 }
 export function getStaticFilesUrl() {
   return `${getBaseURL()}static/`
@@ -24,43 +25,39 @@ export function getUserDataApi(id, usertoken){
 }
 
 export async function getRequest(url,token) {
-  const usertoken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${token.replace('_', '.')}`
   if (localStorage.getItem('petdiniz-token') != null) {
     return await api.get(url,{
       headers : {
-        'Authorization': `Bearer ${usertoken}`
+        'Authorization': `Bearer ${token}`
       }
     })
   }
 }
 
 export async function postRequest(url, data,token) {
-  const usertoken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${token.replace('_', '.')}`
   if (localStorage.getItem('petdiniz-token') != null) {
     return await api.post(url, data,{
       headers : {
-        'Authorization': `Bearer ${usertoken}`
+        'Authorization': `Bearer ${token}`
       }
     })
   }
 }
 export async function putRequest(url, data,token) {
-  const usertoken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${token.replace('_', '.')}`
   if (localStorage.getItem('petdiniz-token') != null) {
     return await api.put(url, data,{
       headers : {
-        'Authorization': `Bearer ${usertoken}`
+        'Authorization': `Bearer ${token}`
       }
     })
   }
 }
 
 export async function deleteRequest(url, id,token) {
-  const usertoken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${token.replace('_', '.')}`
   if (localStorage.getItem('petdiniz-token') != null) {
     return await api.delete(`${url}${id}`,{
       headers : {
-        'Authorization': `Bearer ${usertoken}`
+        'Authorization': `Bearer ${token}`
       }
     })
   }

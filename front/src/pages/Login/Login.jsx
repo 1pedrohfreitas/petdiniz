@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { auth } from '../../services/Login';
-import jwt from 'jwt-decode'
 
 import './style.css'
 import { SnackBarCustom } from '../../components/SnackBarCustom';
@@ -11,7 +10,7 @@ import { LoadingScreen } from '../../components/LoadingScreen';
 import { useDispatch } from 'react-redux';
 import { changeUser, logout } from '../../redux/userSlice';
 
-export function Login() {
+export default function Login() {
 
     let navigate = useNavigate();
 
@@ -33,7 +32,7 @@ export function Login() {
                     navigate(`/home/${localStorage.getItem('petdiniz-token')}`)
                 }
             } catch (error) {
-                console.log("Deu erro")
+                console.log("Token Invalido")
             }
         }
     }
@@ -56,6 +55,7 @@ export function Login() {
                         setSnackBarOpen(false)
                     }, 2000);
                 }).then(() => {
+                    console.log(token)
                     setTimeout(() => navigate(`/validalogin/${token.split(':')[1]}`), 2000)
                 })
             }
@@ -107,69 +107,4 @@ export function Login() {
             </div>
         </div>
     )
-}
-
-export function LoginLoading(props) {
-    let navigate = useNavigate();
-    const dispatch = useDispatch()
-    const { token } = useParams()
-
-    useEffect(() => {
-        if(token == undefined || token == 'undefined'){
-            navigate('/')
-        } else {
-                postRequest('/login/validatetoken', { token: token },localStorage.getItem('petdiniz-token')).then((response)=>{
-                    if (response != null && response.status == 200) {
-                        getUserData()
-                    }                
-                }).catch (error =>{
-                    localStorage.removeItem('petdiniz-token')
-                    navigate('/')
-                }) 
-        }
-        
-    }, []);
-
-    async function getUserData() {
-        const usertoken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${token.replace('_', '.')}`
-        setTimeout(async () => {
-            if (token != null) {
-                const decodedJwt = await jwt(usertoken)
-                getUserDataApi(decodedJwt.Sum, usertoken).then((response) => {
-                    dispatch(changeUser(response.data))
-                }).then(()=>{
-                    navigate(`/home/${token}`)
-                })
-                .catch(err => {
-                    navigate(`/validalogin/${token.split(':')[1]}`)
-                        console.log(err)
-                })
-            }
-        }, 500)
-
-    }
-
-    return (<LoadingScreen />)
-}
-
-export function LogoutLoading(props) {
-    const dispatch = useDispatch()
-    let navigate = useNavigate();
-
-    useEffect(() => {
-        efetuaLogout().then(()=>{
-                navigate(`/`)
-        }).finally(()=>{
-            localStorage.removeItem('petdiniz-token');
-            navigate(`/`)
-        })
-    }, []);
-    async function efetuaLogout(){
-        return new Promise((resolve,reject)=>{
-            dispatch(logout())
-            localStorage.removeItem('petdiniz-token');
-            resolve("Efetuado o Logout")
-        })
-    }
-    return (<LoadingScreen />)
 }
