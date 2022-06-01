@@ -1,1 +1,0 @@
-function e(t){let s=t.split("T")[0].split("-"),a=t.split("T")[1].split("-")[0];return`${s[2]}/${s[1]}/${s[0]} ${a}`}function l(t){let s=`${t/60} h`,a="0 m";return t%60>0&&(a=`${t%60} m`),`${s} ${a}`}export{e as a,l as f};

@@ -5,7 +5,7 @@ import { TableListUser } from '../../components/TableListUser';
 import './style.css';
 
 
-export function ShowUsers(props) {
+export default function ShowUsers(props) {
     const reduxData = useSelector(state => state.user)
     const userData = reduxData.user
 

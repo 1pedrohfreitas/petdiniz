@@ -4,11 +4,13 @@ import {
     Route,
     Routes
 } from "react-router-dom";
-const AddAccessCams = lazy(()=>import("./pages/Cams/AddAccessCams"))
-const DetailsAccessCams = lazy(()=>import("./pages/Cams/DetailsAccessCams"))
-const ListAccessCams = lazy(()=>import("./pages/Cams/ListAccessCams"))
-const MyCams = lazy(()=>import("./pages/Cams/MyCams"))
-const ShowCams = lazy(()=>import("./pages/Cams/ShowCams")) 
+import AddAccessCams from "./pages/Cams/AddAccessCams";
+import DetailsAccessCams from "./pages/Cams/DetailsAccessCams";
+import ListAccessCams from "./pages/Cams/ListAccessCams";
+import MyCams from "./pages/Cams/MyCams";
+import ShowCams from "./pages/Cams/ShowCams";
+import CreateUser from "./pages/User/CreateUser";
+import ShowUsers from "./pages/User/ShowUsers";
 
 const Login = lazy(()=>import("./pages/Login/Login"))
 const LoginLoading = lazy(()=>import("./pages/Login/LoginLoading"))
@@ -17,8 +19,6 @@ const Home = lazy(()=>import("./pages/Home/Home"))
 
 const OnlyViewCams = lazy(()=>import("./pages/OnlyViewCams/OnlyViewCams"))
 
-const CreateUser = lazy(()=>import("./pages/User/CreateUser"))
-const ShowUsers = lazy(()=>import("./pages/User/ShowUsers"))
 
 
 

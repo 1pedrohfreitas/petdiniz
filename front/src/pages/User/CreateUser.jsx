@@ -1,15 +1,15 @@
 import { Autocomplete, Box, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-
 import React, { useEffect, useState } from 'react';
-import { getRequest, postRequest, putRequest } from '../../services/Api';
-import './style.css'
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { SnackBarCustom } from '../../components/SnackBarCustom';
-import { useSelector } from 'react-redux';
 import { TableListUser } from '../../components/TableListUser';
+import { getRequest, postRequest, putRequest } from '../../services/Api';
+import './style.css';
+
 
 const subUrl = `users/`
-export function CreateUser(props) {
+export default function CreateUser(props) {
     let params = useParams()
     const reduxData = useSelector(state => state.user)
     const userData = reduxData.user
