@@ -5,7 +5,7 @@ const api = axios.create({
 });
 
 export function getBaseURL() {
-  return `https://api.net-apps.info/api/v1/`
+  return `https://petsdiniz-api.net-apps.info/api/v1/`
   // return `http://localhost:5000/api/v1/`
 }
 export function getStaticFilesUrl() {
