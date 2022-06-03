@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	host     = "pcam.postgres.uhserver.com"
+	host     = "petdiniz_db"
 	port     = 5432
-	user     = "pedrohfreitas"
-	password = "Pcam01@"
+	user     = "postgres"
+	password = "PetDiniz01@"
 	dbname   = "pcam"
 )
 

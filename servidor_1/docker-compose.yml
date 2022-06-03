@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  petdiniz_db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=PetDiniz01@
+    ports:
+      - '5432:5432'
+    volumes: 
+      - /root/db:/var/lib/postgresql/data
+  petdiniz_back:
+    build: ./back
+    image: 'pedrohfreitas/petdiniz_back:1.0'
+    restart: unless-stopped
+    ports:
+      - '8082:5000'
+    depends_on:
+      - petdiniz_db
