@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	host     = "petdiniz_db"
+	host     = "vps39466.publiccloud.com.br"
 	port     = 5432
 	user     = "postgres"
 	password = "PetDiniz01@"
