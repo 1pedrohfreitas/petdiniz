@@ -26,7 +26,7 @@ func ShowUser(c *gin.Context) {
 
 		return
 	}
-	err2 := db.QueryRow(`Select fullname, alias, username, usertype, status, created_at, updated_at from users where id=$1`, newid).Scan(&user.FullName,
+	err2 := db.QueryRow(`Select fullname, alias, username, usertype, status, created_at, updated_at from "pcam".users where id=$1`, newid).Scan(&user.FullName,
 		&user.Alias,
 		&user.UserName,
 		&user.UserType,
@@ -44,7 +44,7 @@ func ShowUserByUserName(c *gin.Context) {
 	var user models.User
 	username := c.Param("username")
 
-	err2 := db.QueryRow(`Select username from users where username=$1`, username).Scan(&user.FullName)
+	err2 := db.QueryRow(`Select username from "pcam".users where username=$1`, username).Scan(&user.FullName)
 
 	if err2 != nil {
 		c.JSON(200, false)
@@ -85,7 +85,7 @@ func ShowUsers(c *gin.Context) {
 
 	var result dto.PageResultDTO
 
-	rows, err := db.Query(`SELECT id, fullname, alias, username, usertype, status, created_at, updated_at FROM users ORDER BY fullname`)
+	rows, err := db.Query(`SELECT id, fullname, alias, username, usertype, status, created_at, updated_at FROM "pcam".users ORDER BY fullname`)
 	database.CheckError(err)
 
 	defer rows.Close()
@@ -162,7 +162,7 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 	db := database.GetDataBase()
-	_, err2 := db.Exec("DELETE FROM users WHERE id=$1", newid)
+	_, err2 := db.Exec(`DELETE FROM "pcam".users WHERE id=$1`, newid)
 	database.CheckError(err2)
 	c.Status(204)
 }
@@ -184,13 +184,13 @@ func ResetUserAdmin(c *gin.Context) {
 	user.UserName = "admin"
 	user.Password = services.SHA256Encoder("1234")
 
-	_, err2 := db.Exec("DELETE FROM users WHERE username='admin'")
+	_, err2 := db.Exec(`DELETE FROM "pcam".users WHERE username='admin'`)
 	if err2 != nil {
 		fmt.Println("Não existe usuario Admin")
 	}
 
 	err = db.QueryRow(
-		`INSERT INTO users (id,fullname, alias, username, usertype, status, "password") VALUES(1,$1, $2, $3, $4, $5, $6)
+		`INSERT INTO "pcam".users (id,fullname, alias, username, usertype, status, "password") VALUES(1,$1, $2, $3, $4, $5, $6)
 		RETURNING id`, user.FullName,
 		user.Alias,
 		user.UserName,

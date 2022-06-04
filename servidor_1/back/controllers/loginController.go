@@ -20,7 +20,7 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	dbErro := db.QueryRow(`select id ,username, password from users where status = 1 and username=$1`,
+	dbErro := db.QueryRow(`select id ,username, password from "pcam".users where status = 1 and username=$1`,
 		p.Username).Scan(&login.ID, &login.Username, &login.Password)
 
 	if dbErro != nil {
