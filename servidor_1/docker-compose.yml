@@ -16,7 +16,5 @@ services:
     restart: unless-stopped
     ports:
       - '8082:5000'
-    depends_on:
-      - petsdiniz_db
     links:
-      - "servidor_1-petsdiniz_db-1:servidor_1-petsdiniz_db-1"
+      - "petsdiniz_db"
