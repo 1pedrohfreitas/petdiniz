@@ -18,3 +18,5 @@ services:
       - '8082:5000'
     depends_on:
       - petdiniz_db
+    links:
+      - "petdiniz_db:petdiniz_db"
