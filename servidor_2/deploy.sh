@@ -12,4 +12,4 @@ docker rmi pedrohfreitas/petdiniz_front:1.0
 #docker rmi pedrohfreitas/petdiniz_rmtp:1.0
 
 echo "Subindo a stack de serviços"
-cd docker compose up -d
+docker compose up -d
