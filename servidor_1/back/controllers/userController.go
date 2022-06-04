@@ -66,7 +66,7 @@ func CreateUser(c *gin.Context) {
 	}
 	user.Password = services.SHA256Encoder(user.Password)
 	err = db.QueryRow(
-		`INSERT INTO users (fullname, alias, username, usertype, status, "password") VALUES($1, $2, $3, $4, $5, $6)
+		`INSERT INTO "pcam".users (fullname, alias, username, usertype, status, "password") VALUES($1, $2, $3, $4, $5, $6)
 		RETURNING id`, user.FullName,
 		user.Alias,
 		user.UserName,
@@ -122,7 +122,7 @@ func UpdateUser(c *gin.Context) {
 	}
 	if user.Password != "" {
 		user.Password = services.SHA256Encoder(user.Password)
-		_, err2 := db.Exec(`UPDATE pcam.users SET fullname=$1, alias=$2, username=$3, usertype=$4, status=$5, "password"=$6 WHERE id=$7`,
+		_, err2 := db.Exec(`UPDATE "pcam".users SET fullname=$1, alias=$2, username=$3, usertype=$4, status=$5, "password"=$6 WHERE id=$7`,
 			user.FullName,
 			user.Alias,
 			user.UserName,
@@ -134,7 +134,7 @@ func UpdateUser(c *gin.Context) {
 
 		c.JSON(200, user)
 	} else {
-		_, err2 := db.Exec(`UPDATE pcam.users SET fullname=$1, alias=$2, username=$3, usertype=$4, status=$5 WHERE id=$6`,
+		_, err2 := db.Exec(`UPDATE "pcam".users SET fullname=$1, alias=$2, username=$3, usertype=$4, status=$5 WHERE id=$6`,
 			user.FullName,
 			user.Alias,
 			user.UserName,

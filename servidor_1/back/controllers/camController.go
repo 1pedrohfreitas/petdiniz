@@ -55,7 +55,7 @@ func CreateCam(c *gin.Context) {
 	}
 
 	err = db.QueryRow(
-		`INSERT INTO pcam.cams (devicename, alias, streamtype, urlcamstream, status) VALUES($1, $2, $3, $4, $5)
+		`INSERT INTO "pcam".cams (devicename, alias, streamtype, urlcamstream, status) VALUES($1, $2, $3, $4, $5)
 		RETURNING id`, cam.DeviceName,
 		cam.Alias,
 		cam.StreamType,
@@ -75,7 +75,7 @@ func ShowCams(c *gin.Context) {
 
 	rows, err := db.Query(`SELECT c.id, c.devicename, c.alias, c.streamtype, c.urlcamstream, c.status, c.created_at, c.updated_at, ti.sourceimg ,ti.alias
 	FROM "pcam".cams c
-	INNER JOIN t_imgs ti on ti.id = c.imageid`)
+	INNER JOIN "pcam".t_imgs ti on ti.id = c.imageid`)
 	database.CheckError(err)
 
 	defer rows.Close()
@@ -112,7 +112,7 @@ func UpdateCam(c *gin.Context) {
 		return
 	}
 
-	_, err2 := db.Exec(`UPDATE cams SET devicename=$1, alias=$2, streamtype=$3, urlcamstream=$4, status=$5 WHERE id=$6`,
+	_, err2 := db.Exec(`UPDATE "pcam".cams SET devicename=$1, alias=$2, streamtype=$3, urlcamstream=$4, status=$5 WHERE id=$6`,
 		cam.DeviceName,
 		cam.Alias,
 		cam.StreamType,
@@ -138,7 +138,7 @@ func DeleteCam(c *gin.Context) {
 		return
 	}
 	db := database.GetDataBase()
-	_, err2 := db.Exec(`DELETE FROM cams WHERE id=$1`, newid)
+	_, err2 := db.Exec(`DELETE FROM "pcam".cams WHERE id=$1`, newid)
 	database.CheckError(err2)
 	c.Status(204)
 }
@@ -271,7 +271,7 @@ func DeleteCamsAccessPermission(c *gin.Context) {
 	token := c.Param("token")
 
 	db := database.GetDataBase()
-	_, err2 := db.Exec(`DELETE FROM cam_access_permission WHERE token=$1`, token)
+	_, err2 := db.Exec(`DELETE FROM "pcam".cam_access_permission WHERE token=$1`, token)
 	database.CheckError(err2)
 	c.Status(204)
 }
