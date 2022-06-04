@@ -19,4 +19,4 @@ services:
     depends_on:
       - petsdiniz_db
     links:
-      - "petsdiniz_db:petsdiniz_db"
+      - "servidor_1-petsdiniz_db-1:servidor_1-petsdiniz_db-1"

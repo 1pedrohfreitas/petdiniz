@@ -1,6 +1,6 @@
 -- DROP SCHEMA pcam;
 
-CREATE SCHEMA pcam AUTHORIZATION pedrohfreitas;
+CREATE SCHEMA pcam AUTHORIZATION postgres;
 
 -- DROP SEQUENCE pcam.cam_access_permission_id_seq;
 
@@ -74,19 +74,10 @@ CREATE TABLE pcam.users (
 	"password" varchar NOT NULL,
 	created_at timestamptz NOT NULL DEFAULT now(),
 	updated_at timestamptz NOT NULL DEFAULT now(),
-	CONSTRAINT unique_username UNIQUE (username),
 	CONSTRAINT users_pkey PRIMARY KEY (id),
 	CONSTRAINT users_username_key UNIQUE (username)
 );
-CREATE INDEX sytemusers_username_idx ON users USING btree (username, usertype);
-CREATE INDEX users_username_idx ON users USING btree (username, usertype);
 
--- Table Triggers
-
-create trigger set_timestamp before
-update
-    on
-    users for each row execute procedure trigger_set_timestamp();
 
 
 -- pcam.users_group definition
@@ -144,17 +135,11 @@ CREATE TABLE pcam.cam_access_permission (
 	CONSTRAINT cam_access_permission_fk FOREIGN KEY (camid) REFERENCES pcam.cams(id) ON DELETE CASCADE,
 	CONSTRAINT cam_access_permission_user_fk FOREIGN KEY (createbyuser) REFERENCES pcam.users(id)
 );
-CREATE INDEX cam_access_permission_camid_idx ON cam_access_permission USING btree (camid);
 
 
 
-CREATE OR REPLACE FUNCTION pcam.trigger_set_timestamp()
- RETURNS trigger
- LANGUAGE plpgsql
-AS $function$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$function$
-;
+
+CREATE INDEX sytemusers_username_idx ON pcam.users USING btree (username, usertype);
+CREATE INDEX users_username_idx ON pcam.users USING btree (username, usertype);
+CREATE INDEX cam_access_permission_camid_idx ON pcam.cam_access_permission USING btree (camid);
+INSERT INTO pcam.users (id, fullname, alias, username, usertype, status, "password", created_at, updated_at) VALUES(1, 'Administrador', 'Administrador', 'admin', 0, 1, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '2022-05-22 12:03:40.089', '2022-05-22 12:03:40.089');
