@@ -10,7 +10,7 @@ func CamAccessPermissionRepository(camAccessPermission models.CamAccessPermissio
 	for _, c := range camAccessPermission.CamId {
 		db := database.GetDataBase()
 		err := db.QueryRow(
-			`INSERT INTO cam_access_permission (
+			`INSERT INTO "pcam".cam_access_permission (
 				token,
 				alias,
 				createbyuser,
