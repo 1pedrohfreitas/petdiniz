@@ -8,6 +8,7 @@ type Cams struct {
 	Alias        string    `json:"alias"`
 	StreamType   string    `json:"-"`
 	UrlCamStream string    `json:"urlcamstream"`
+	Code         string    `json:"code"`
 	Status       int       `json:"status"`
 	Icon         T_Images  `json:"icon"`
 	Created_at   time.Time `json:"-"`

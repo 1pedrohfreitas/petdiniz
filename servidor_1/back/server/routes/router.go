@@ -24,6 +24,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 	main := router.Group("api/v1")
 	{
 		main.GET("/onlyaccesscam/:token", controllers.ShowCamsByToken)
+		main.GET("/validatestreamrmtp/:code", controllers.ValidateStreamRmtpCam)
 		main.POST("/resetuser", controllers.ResetUserAdmin)
 		login := main.Group("login")
 		{

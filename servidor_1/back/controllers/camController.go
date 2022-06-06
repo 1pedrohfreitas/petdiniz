@@ -312,3 +312,12 @@ func ShowDetailsCamsAccessPermission(c *gin.Context) {
 	c.JSON(200, cam)
 
 }
+
+func ValidateStreamRmtpCam(c *gin.Context) {
+	code := c.Param("code")
+
+	if services.IsValidStreamRmtp(code) {
+		c.JSON(200, nil)
+	}
+	c.JSON(401, nil)
+}
