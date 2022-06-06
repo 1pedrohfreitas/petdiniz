@@ -1,12 +1,12 @@
-import { AppBar, Autocomplete, Box, FormControl, InputLabel, MenuItem, Select, TextField, Toolbar } from '@mui/material';
-
+import { AppBar, Box, Toolbar } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { getRequest } from '../../services/Api';
-import './style.css'
+import { useParams } from 'react-router-dom';
+import logo from '../../assets/img/petdiniz.jpg';
 import CamViewCard from '../../components/CamViewCard';
 import ModalCam from '../../components/ModalCam';
-import { useParams } from 'react-router-dom';
-import logo from '../../assets/img/petdiniz.jpg'
+import { getRequest } from '../../services/Api';
+import './style.css';
+
 
 export function OnlyViewCams(props) {
     const { token } = useParams();
@@ -18,7 +18,6 @@ export function OnlyViewCams(props) {
     async function getInfo() {
         getRequest(`onlyaccesscam/${token}`,token).then(
             (response) => {
-                console.log(response.data)
                 if (response.data.data != null) {
                     setCams(response.data.data.map((cam, i) => (
                         <CamViewCard

@@ -6,7 +6,6 @@ export default function CreateQrCode(props) {
 
     useEffect(() => {
         Qrcode.toCanvas(canvasRef.current, props.text, (err) => {
-            console.log(err)
         })
     }, [props.text]);
 

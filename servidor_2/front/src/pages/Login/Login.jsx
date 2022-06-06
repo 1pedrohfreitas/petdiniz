@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { auth } from '../../services/Login';
-
-import './style.css'
+import { useNavigate } from 'react-router-dom';
+import logo from '../../assets/img/petdiniz.jpg';
 import { SnackBarCustom } from '../../components/SnackBarCustom';
-import { getUserDataApi, postRequest } from '../../services/Api';
-import logo from '../../assets/img/petdiniz.jpg'
-import { LoadingScreen } from '../../components/LoadingScreen';
-import { useDispatch } from 'react-redux';
-import { changeUser, logout } from '../../redux/userSlice';
+import { postRequest } from '../../services/Api';
+import { auth } from '../../services/Login';
+import './style.css';
+
 
 export default function Login() {
 
@@ -32,7 +29,6 @@ export default function Login() {
                     navigate(`/home/${localStorage.getItem('petdiniz-token')}`)
                 }
             } catch (error) {
-                console.log("Token Invalido")
             }
         }
     }
@@ -55,7 +51,6 @@ export default function Login() {
                         setSnackBarOpen(false)
                     }, 2000);
                 }).then(() => {
-                    console.log(token)
                     setTimeout(() => navigate(`/validalogin/${token.split(':')[1]}`), 2000)
                 })
             }
@@ -67,7 +62,6 @@ export default function Login() {
                 })
             }
         }).catch(err => {
-            console.log("Erro")
         })
 
     }

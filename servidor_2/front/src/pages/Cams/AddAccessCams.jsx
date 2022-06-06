@@ -108,7 +108,7 @@ export default function AddAccessCams(props) {
                         }, 3000);
                     })
     
-                }).catch(err => console.log(err))
+                }).catch(err => {})
             })
             
         } else {

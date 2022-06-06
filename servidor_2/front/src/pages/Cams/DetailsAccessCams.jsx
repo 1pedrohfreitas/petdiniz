@@ -59,7 +59,6 @@ export default function DetailsAccessCams(props) {
             })
     
             api.getRequest(`onlyaccesscam/${token}`, localStorage.getItem('petdiniz-token')).then(response => {
-                console.log(response)
                 if (response.data.data != null) {
                     setCamsList(response.data.data)
                 }

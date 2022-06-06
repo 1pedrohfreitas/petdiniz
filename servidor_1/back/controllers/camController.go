@@ -314,10 +314,14 @@ func ShowDetailsCamsAccessPermission(c *gin.Context) {
 }
 
 func ValidateStreamRmtpCam(c *gin.Context) {
-	code := c.Param("code")
+	u := c.Request.URL.Query()
+	if len(u) > 0 {
+		code := u["code"][0]
 
-	if services.IsValidStreamRmtp(code) {
-		c.JSON(200, nil)
+		if services.IsValidStreamRmtp(code) {
+			c.JSON(200, nil)
+		}
 	}
+
 	c.JSON(401, nil)
 }

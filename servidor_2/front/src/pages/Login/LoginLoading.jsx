@@ -1,14 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { auth } from '../../services/Login';
-
-import './style.css'
-import { SnackBarCustom } from '../../components/SnackBarCustom';
-import { getUserDataApi, postRequest } from '../../services/Api';
-import logo from '../../assets/img/petdiniz.jpg'
-import { LoadingScreen } from '../../components/LoadingScreen';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { changeUser, logout } from '../../redux/userSlice';
+import { useNavigate, useParams } from 'react-router-dom';
+import { LoadingScreen } from '../../components/LoadingScreen';
+import { changeUser } from '../../redux/userSlice';
+import { getUserDataApi, postRequest } from '../../services/Api';
+import './style.css';
+
 
 export default function LoginLoading(props) {
     let navigate = useNavigate();
@@ -41,7 +38,6 @@ export default function LoginLoading(props) {
                 })
                 .catch(err => {
                     navigate(`/validalogin/${token.split(':')[1]}`)
-                        console.log(err)
                 })
             }
         }, 500)

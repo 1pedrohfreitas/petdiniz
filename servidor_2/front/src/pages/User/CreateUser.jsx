@@ -41,10 +41,8 @@ export default function CreateUser(props) {
 
     useEffect(() => {
         if (params.userid != null) {
-            console.log(1000)
             getUserData()
         } else {
-            console.log(2000)
             setId('')
             setFullname('')
             setAlias('')
@@ -131,12 +129,6 @@ export default function CreateUser(props) {
                 username === '' ||
                 password === '') {
                 openSnackBar("error", "Favor preencher todos os campos").finally(() => {
-                    console.log(fullname)
-                    console.log(alias)
-                    console.log(status)
-                    console.log(userType)
-                    console.log(username)
-                    console.log(password)
                     setTimeout(() => {
                         setSnackBarOpen(false)
                     }, 3000);
@@ -183,7 +175,6 @@ export default function CreateUser(props) {
             if (password === '') {
                 delete data.password
             }
-            console.log(data)
             putRequest(subUrl, data, localStorage.getItem('petdiniz-token')).then((response) => {
 
                 setId(response.data.id)

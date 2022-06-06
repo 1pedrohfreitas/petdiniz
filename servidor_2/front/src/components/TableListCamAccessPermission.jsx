@@ -45,12 +45,10 @@ export function TableListCamAccessPermission(props) {
     useEffect(() => {
         let dadosFormatadosFilter = dados
         if (props.idFilter != null) {
-            console.log(props.idFilter)
             dadosFormatadosFilter = dadosFormatadosFilter.filter(dado => {
                 return dado.userid == props.idFilter
             })
         } else if (props.refFilter != null) {
-            console.log(props.refFilter)
             dadosFormatadosFilter = dadosFormatadosFilter.filter(dado => {
                 return dado.alias == props.refFilter
             })
