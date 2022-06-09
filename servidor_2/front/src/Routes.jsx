@@ -28,7 +28,7 @@ export function AppRoutes() {
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/validalogin/:token" element={<LoginLoading />} />
-                <Route path="/logout/" element={<LogoutLoading />} />
+                <Route path="/logout" element={<LogoutLoading />} />
                 <Route path="/onlyviewcams/:token" element={<OnlyViewCams />} />
                 <Route path="/home/:token" element={<Home />}>
                     <Route path="user" element={<CreateUser />} />

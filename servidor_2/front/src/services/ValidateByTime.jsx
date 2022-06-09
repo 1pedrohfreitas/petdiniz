@@ -1,4 +1,4 @@
-export default function ValidatByTime(time, timeBefore,callback){
+export default function ValidateByTime(time, timeBefore,callback){
     let timeValid
     window.onload = resetTimer;
     document.onmousemove = resetTimer;
@@ -13,6 +13,7 @@ export default function ValidatByTime(time, timeBefore,callback){
     }
 
     function resetTimer(){
+        console.log("Vou resetar o tempo")
         clearTimeout(timeValid)
         timeValid = setTimeout(actionAfterInactivity,time)
     }

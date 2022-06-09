@@ -1,26 +1,21 @@
-import './style.css'
-
-import React, { useEffect, useState } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
-
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-
-import logo from '../../assets/img/petdiniz.jpg'
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Logout from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
-import Box from '@mui/material/Box';
+import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Logout from '@mui/icons-material/Logout';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import ValidatByTime from '../../services/ValidatByTime';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import logo from '../../assets/img/petdiniz.jpg';
+import './style.css';
 
 function Home() {
     let navigate = useNavigate();
@@ -30,11 +25,18 @@ function Home() {
 
     useEffect(() => {
         if (userData != null) {
-            // ValidatByTime(20000, null,()=>{
-            //     logout().then(()=>{
-            //         navigate(`/`, { replace: true })
-            //     })
-            // })
+            let timeValid
+            window.onload = resetTimer;
+            document.onmousemove = resetTimer;
+            document.onkeydown = resetTimer;
+
+            function resetTimer(){
+                console.log("Vou resetar o tempo")
+                clearTimeout(timeValid)
+                timeValid = setTimeout(()=>{
+                    navigate(`/logout`, { replace: true })
+                },30 * 60000)
+            }
         }
     }, [userData]);
 
@@ -239,38 +241,38 @@ export function FuncoesMenu(props) {
                     }}
                 >
                     <MenuItem
-                        style={{ display: [0,1,2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        style={{ display: [0, 1, 2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
                         onClick={() => openSubPage('addaccesscams', 'Liberar Acesso Câmeras')}
                     >
                         Liberar Acesso Câmeras
                     </MenuItem>
                     <MenuItem
-                        style={{ display: [0,1,2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        style={{ display: [0, 1, 2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
                         onClick={() => openSubPage('listaccesscams', 'Listar Permissão Acesso Câmeras')}
                     >
                         Listar Permissão Acesso Câmeras
                     </MenuItem>
                     <MenuItem
-                        style={{ display: [0,1].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        style={{ display: [0, 1].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
                         onClick={() => openSubPage('cams', 'Listar Câmeras')}
                     >
                         Listar Câmeras
                     </MenuItem>
                     <MenuItem
-                        style={{ display: [0,1,2,3].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        style={{ display: [0, 1, 2, 3].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
                         onClick={() => openSubPage(`mycams`, 'Minhas Câmeras')}
                     >
                         Minhas Câmeras
                     </MenuItem>
                     <Divider />
                     <MenuItem
-                        style={{ display: [0,1,2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        style={{ display: [0, 1, 2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
                         onClick={() => openSubPage('user', 'Cadastrar Usuário')}
                     >
                         Cadastrar Usuário
                     </MenuItem>
                     <MenuItem
-                        style={{ display: [0,1,2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
+                        style={{ display: [0, 1, 2].indexOf(userData.usertype) > -1 ? "flex" : "none" }}
                         onClick={() => openSubPage('users', 'Listar Usuários')}
                     >
                         Listar Usuários
