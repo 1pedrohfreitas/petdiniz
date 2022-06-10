@@ -10,6 +10,7 @@ import ListAccessCams from "./pages/Cams/ListAccessCams";
 import MyCams from "./pages/Cams/MyCams";
 import ShowCams from "./pages/Cams/ShowCams";
 import LogoutLoading from "./pages/Login/LogoutLoading";
+import OnlyViewCams from "./pages/OnlyViewCams/OnlyViewCams";
 import CreateUser from "./pages/User/CreateUser";
 import ShowUsers from "./pages/User/ShowUsers";
 
@@ -17,7 +18,6 @@ const Login = lazy(()=>import("./pages/Login/Login"))
 const LoginLoading = lazy(()=>import("./pages/Login/LoginLoading"))
 const Home = lazy(()=>import("./pages/Home/Home"))
 
-const OnlyViewCams = lazy(()=>import("./pages/OnlyViewCams/OnlyViewCams"))
 
 
 

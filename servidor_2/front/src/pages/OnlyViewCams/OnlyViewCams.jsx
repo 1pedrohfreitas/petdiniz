@@ -8,7 +8,7 @@ import { getRequest } from '../../services/Api';
 import './style.css';
 
 
-export function OnlyViewCams(props) {
+export default function OnlyViewCams(props) {
     const { token } = useParams();
     const [cams, setCams] = useState([]);
     const [camId, setCamId] = useState(0);
