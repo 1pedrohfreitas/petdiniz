@@ -3,15 +3,11 @@ import React, { useEffect, useRef } from 'react';
 
 function PlayerVideo(props) {
   const playerRef = useRef();
-  // return (
-  //   <ReactHlsPlayer
-  //     src={props.urlVideo}
-  //     autoPlay={true}
-  //     playerRef={playerRef}
-  //     controls={true}
-  //     
-  //   />
-  // );
+
+  const autoLoad = ()=>{
+alert(1)
+  }
+
   useEffect(() => {
     var video = document.getElementById('video');
     if (Hls.isSupported()) {
@@ -28,10 +24,14 @@ function PlayerVideo(props) {
       <video id="video"
       controls
       autoPlay
+      loop
       playsInline
       muted
       width="100%"
-      height="auto"></video>
+      height="auto"
+      type='application/vnd.apple.mpegurl'
+      onLoad={autoLoad}
+      ></video>
     </React.Fragment>
   );
 }

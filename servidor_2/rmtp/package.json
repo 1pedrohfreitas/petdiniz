@@ -1,0 +1,10 @@
+{
+  "name": "rmtpServer",
+  "version": "0.0.1",
+  "main": "app.js",
+  "author": "Pedro Henrique Freitas <1pedrohfreitas@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "node-media-server": "^2.3.12"
+  }
+}
