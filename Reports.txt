@@ -1,3 +1,4 @@
 Erros -> IOS:
-1-> Demora para carregar imagem das cameras
 2-> Botão de salvar cadastro não funciona
+
+gerar nome referencia defaulf -> tela de liberar acesso

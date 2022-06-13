@@ -31,7 +31,6 @@ function Home() {
             document.onkeydown = resetTimer;
 
             function resetTimer(){
-                console.log("Vou resetar o tempo")
                 clearTimeout(timeValid)
                 timeValid = setTimeout(()=>{
                     navigate(`/logout`, { replace: true })

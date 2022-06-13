@@ -235,7 +235,7 @@ func ShowListCamsAccessPermission(c *gin.Context) {
 
 	var result dto.PageResultDTO
 
-	rows, err := db.Query(`select distinct on (cap."token") cap.alias, cap."token",
+	rows, err := db.Query(`select distinct on (cap."token") cap.id, cap.alias, cap."token",
 	case 
 		when u.fullname is not null then u.fullname
 		else 'Token Unico'
@@ -253,6 +253,7 @@ func ShowListCamsAccessPermission(c *gin.Context) {
 		var cam models.CamAccessPermission
 
 		err = rows.Scan(
+			&cam.ID,
 			&cam.Alias,
 			&cam.Token,
 			&cam.UserName,

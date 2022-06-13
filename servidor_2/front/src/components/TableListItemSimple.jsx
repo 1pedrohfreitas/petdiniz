@@ -20,7 +20,7 @@ export function TableListItemSimple(props) {
         if(props.data != null){
             setRows(props.data)
         }
-    }, []);
+    }, [props.data]);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);

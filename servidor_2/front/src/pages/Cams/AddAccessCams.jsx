@@ -1,6 +1,7 @@
 import { Autocomplete, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import CheckBoxCustom from '../../components/CheckBoxCustom';
 import ModalQrCode from '../../components/ModalQrCode';
 import RadioListItem from '../../components/RadioListItem';
@@ -10,6 +11,7 @@ import './style.css';
 
 export default function AddAccessCams(props) {
     const reduxData = useSelector(state => state.user)
+    const navigate = useNavigate()
     const userData = reduxData.user
     const now = new Date();
     const [startDate, setStartDate] = useState(new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().substring(0, 19));
@@ -19,6 +21,7 @@ export default function AddAccessCams(props) {
     const [onlyLink, setOnlyLink] = useState('');
     const [alias, setAlias] = useState('');
     const [typeEndPermission, setTypeEndPermission] = useState(1);
+    const [disableButtonSave, setDisableButtonSave] = useState(false);
 
     const [snackBarType, setSnackBarType] = useState('');
     const [snackBarMessage, setSnackBarMessage] = useState('');
@@ -43,13 +46,13 @@ export default function AddAccessCams(props) {
 
     const getAllDates = () => {
 
-        import('../../services/Api').then(api =>{
+        import('../../services/Api').then(api => {
             api.getRequest(`users/`, localStorage.getItem('petdiniz-token')).then((response) => {
                 if (response.data.data != null) {
                     setUsers(response.data.data.map(user => ({
                         name: user.fullname,
                         id: user.id,
-    
+
                     })))
                 }
             })
@@ -97,20 +100,37 @@ export default function AddAccessCams(props) {
             data.userid = 0
         }
         if (listErro.length == 0) {
-            import('../../services/Api').then(api =>{
+            if (alias == '') {
+                const now = new Date(Date.now()).toISOString().replace('T', ' ').split('.')[0]
+                const nowDateSplit = now.split(' ')[0].split('-')
+                const nowDate = `${nowDateSplit[2]}-${nowDateSplit[1]}-${nowDateSplit[0]}`
+                const nowHour = now.split(' ')[1]
+                if (userIdPermission == null || userIdPermission == '') {
+                    setAlias(`${nowDate} ${nowHour} - Acesso Único`)
+                    data.alias = `${nowDate} ${nowHour} - Acesso Único`
+                } else {
+                    setAlias(`${nowDate} ${nowHour} - ${users.filter(user => user.id == userIdPermission)[0].name}`)
+                    data.alias = `${nowDate} ${nowHour} - ${users.filter(user => user.id == userIdPermission)[0].name}`
+                }
+
+            }
+            setDisableButtonSave(true)
+            import('../../services/Api').then(api => {
                 api.postRequest('cams/camaccesspermission', data, localStorage.getItem('petdiniz-token')).then((response) => {
                     const token = response.data
-                    setOnlyLink(`${window.location.origin}/onlyviewcams/${token}`)
+                    navigate(`/home/${localStorage.getItem('petdiniz-token')}/detailsaccesscams/${token}`)
+                    // setOnlyLink(`${window.location.origin}/onlyviewcams/${token}`)
                     openSnackBar("success", "Link gerado com sucesso!").then(() => {
                     }).finally(() => {
+                        setDisableButtonSave(false)
                         setTimeout(() => {
                             setSnackBarOpen(false)
                         }, 3000);
                     })
-    
-                }).catch(err => {})
+
+                }).catch(err => { })
             })
-            
+
         } else {
             listErro.forEach(erro => {
                 openSnackBar("erro", erro).then(() => {
@@ -268,6 +288,7 @@ export default function AddAccessCams(props) {
                 <button
                     className='btnSave'
                     onClick={handleSaveAccess}
+                    disabled={disableButtonSave}
                 >Salvar</button>
             </div>
             <SnackBarCustom

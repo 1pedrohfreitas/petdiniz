@@ -13,7 +13,6 @@ export default function ValidateByTime(time, timeBefore,callback){
     }
 
     function resetTimer(){
-        console.log("Vou resetar o tempo")
         clearTimeout(timeValid)
         timeValid = setTimeout(actionAfterInactivity,time)
     }

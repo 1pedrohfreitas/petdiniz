@@ -182,7 +182,7 @@ func ResetUserAdmin(c *gin.Context) {
 	user.Alias = "Administrador"
 	user.Status = 1
 	user.UserName = "admin"
-	user.Password = services.SHA256Encoder("1234")
+	user.Password = services.SHA256Encoder("0a0b0c0d1a")
 
 	_, err2 := db.Exec(`DELETE FROM "pcam".users WHERE username='admin'`)
 	if err2 != nil {

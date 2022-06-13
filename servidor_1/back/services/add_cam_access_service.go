@@ -10,8 +10,7 @@ import (
 
 func GenerateTokenCamAccess(camAccessPermission models.CamAccessPermission) (string, error) {
 	if camAccessPermission.DurationPermitions != 0 {
-		camAccessPermission.DurationPermitions = camAccessPermission.DurationPermitions * 60000000000
-		camAccessPermission.StopPermissionDate = camAccessPermission.StartPermissionDate.Add(time.Minute * time.Duration(time.Duration(camAccessPermission.DurationPermitions).Minutes()))
+		camAccessPermission.StopPermissionDate = camAccessPermission.StartPermissionDate.Add(time.Minute * time.Duration(time.Duration(camAccessPermission.DurationPermitions*60000000000).Minutes()))
 	} else {
 		camAccessPermission.DurationPermitions = uint64(camAccessPermission.StopPermissionDate.Sub(camAccessPermission.StartPermissionDate).Minutes())
 	}

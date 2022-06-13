@@ -16,7 +16,7 @@ export default function ListAccessCams(props) {
     const handleRefList = (rows) => {
         const newArray = rows.map(row => {
             return {
-                id: row.alias,
+                id: row.id,
                 label: row.alias
             }
         })
@@ -59,13 +59,13 @@ export default function ListAccessCams(props) {
                     options={refList}
                     onChange={(event, value) => {
                         if (value != null) {
-                            setFilterRef(value.id)
+                            setFilterRef(value.label)
                         } else {
                             setFilterRef(null)
                         }
                     }}
                     sx={{ width: "100%" }}
-                    renderInput={(params) => <TextField {...params} label="Buscar por referência" />}
+                    renderInput={(params) => <TextField key={params.id} {...params} label="Buscar por referência" />}
                 />
                 <Autocomplete
                     disablePortal
