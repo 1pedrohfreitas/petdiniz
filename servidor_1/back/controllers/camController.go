@@ -245,7 +245,8 @@ func ShowListCamsAccessPermission(c *gin.Context) {
 	cap.stoppermissiondate,
 	cap.durationpermitions
    from "pcam".cam_access_permission cap
-   left join "pcam".users u on u.id = cap.userid`)
+   left join "pcam".users u on u.id = cap.userid 
+   where stoppermissiondate > now()`)
 	database.CheckError(err)
 
 	defer rows.Close()
