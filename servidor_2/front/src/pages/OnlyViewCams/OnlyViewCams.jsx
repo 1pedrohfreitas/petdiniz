@@ -35,7 +35,7 @@ export default function OnlyViewCams(props) {
 
     useEffect(() => {
         getInfo()
-    }, []);
+    }, [token]);
 
     const handleOpenModal = (id, urlVideo) => {
         setCamId(id)
